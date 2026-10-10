@@ -112,3 +112,39 @@ class MarketObservation(Base):
     quality_status: Mapped[str] = mapped_column(String(16), default="ok", server_default="ok")
     # Adjustment and provenance notes, e.g. {"adjusted": "splits+dividends"}.
     provenance: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict, server_default="{}")
+
+
+class InstrumentSnapshot(Base):
+    """Latest non-price statistics (crypto market cap, supply, 24h volume)."""
+
+    __tablename__ = "instrument_snapshots"
+
+    instrument_id: Mapped[str] = mapped_column(
+        ForeignKey("instruments.id", ondelete="CASCADE"), primary_key=True
+    )
+    provider: Mapped[str] = mapped_column(String(32))
+    as_of: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    retrieved_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    price: Mapped[Decimal | None] = mapped_column(Numeric(24, 8))
+    market_cap: Mapped[Decimal | None] = mapped_column(Numeric(28, 2))
+    circulating_supply: Mapped[Decimal | None] = mapped_column(Numeric(28, 4))
+    total_supply: Mapped[Decimal | None] = mapped_column(Numeric(28, 4))
+    max_supply: Mapped[Decimal | None] = mapped_column(Numeric(28, 4))
+    volume_24h: Mapped[Decimal | None] = mapped_column(Numeric(28, 2))
+
+
+class JobRun(Base):
+    """One execution of a batch job, for freshness reporting and debugging."""
+
+    __tablename__ = "job_runs"
+    __table_args__ = (
+        CheckConstraint("status in ('running', 'success', 'partial', 'failed')", name="status"),
+        Index("ix_job_runs_job_started", "job", "started_at"),
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    job: Mapped[str] = mapped_column(String(64))
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    status: Mapped[str] = mapped_column(String(16))
+    details: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict, server_default="{}")

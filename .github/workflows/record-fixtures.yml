@@ -1,0 +1,31 @@
+name: Record provider fixtures
+
+# Captures small real payloads from Yahoo, CoinGecko and SEC EDGAR and pushes
+# them to the `fixtures/recorded` branch, so tests use real response shapes
+# without calling providers in CI.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r backend/requirements/jobs.txt
+      - run: python -m jobs.record_fixtures tests/fixtures/recorded
+        working-directory: backend
+      - name: Push to fixtures branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b fixtures/recorded
+          git add backend/tests/fixtures/recorded
+          git commit -m "Record provider fixtures"
+          git push -f origin fixtures/recorded

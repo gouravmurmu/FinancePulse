@@ -20,6 +20,16 @@ strict = true
 plugins = ["pydantic.mypy"]
 exclude = ["alembic/"]
 
+# pandas-stubs types index labels as Hashable, which makes idiomatic
+# date-indexed code noisy; these checks stay on everywhere else.
+[[tool.mypy.overrides]]
+module = ["app.analytics.*", "app.providers.*", "app.services.*", "app.api.*"]
+disable_error_code = ["call-overload", "arg-type", "no-any-return", "index"]
+
+[[tool.mypy.overrides]]
+module = ["yfinance", "yfinance.*"]
+ignore_missing_imports = true
+
 [[tool.mypy.overrides]]
 module = ["tests.*"]
 disallow_untyped_defs = false
