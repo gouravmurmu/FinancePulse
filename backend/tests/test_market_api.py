@@ -234,3 +234,14 @@ def test_metal_context(client):
     assert ctx["gold_silver_ratio"] > 0
     d = ctx["inr_decomposition"]
     assert d["inr_return"] == pytest.approx((1 + d["usd_return"]) * (1 + d["fx_return"]) - 1)
+
+
+def test_job_status_flags_overdue_jobs(client):
+    body = client.get("/api/v1/status").json()
+    jobs = {j["job"]: j for j in body["jobs"]}
+    assert jobs["refresh_market_data"]["overdue"] is False
+    assert jobs["refresh_market_data"]["last_status"] == "success"
+    # No forecast run was recorded, and it is a required job.
+    assert jobs["run_forecasts"]["overdue"] is True and jobs["run_forecasts"]["optional"] is False
+    assert jobs["refresh_news"]["optional"] is True
+    assert body["status"] == "attention"

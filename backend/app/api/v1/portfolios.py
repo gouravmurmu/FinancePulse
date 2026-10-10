@@ -5,6 +5,7 @@ from fastapi import APIRouter, Response
 
 from app.api.deps import DbSession, UserId
 from app.api.v1.instruments import PeriodQ
+from app.core.rate_limit import rate_limit
 from app.schemas.portfolio import (
     CsvImport,
     PortfolioCreate,
@@ -117,7 +118,11 @@ def export_csv(user: UserId, session: DbSession, portfolio_id: uuid.UUID) -> Res
     )
 
 
-@router.post("/{portfolio_id}/import", summary="Import transactions from CSV (all or nothing)")
+@router.post(
+    "/{portfolio_id}/import",
+    summary="Import transactions from CSV (all or nothing)",
+    dependencies=[rate_limit("import", 10)],
+)
 def import_csv(
     user: UserId, session: DbSession, portfolio_id: uuid.UUID, body: CsvImport
 ) -> dict[str, Literal["ok"] | int | bool]:

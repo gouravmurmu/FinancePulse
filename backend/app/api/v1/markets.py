@@ -5,6 +5,7 @@ from fastapi import APIRouter, Query
 from app.api.deps import DbSession
 from app.api.v1.instruments import PeriodQ
 from app.core.errors import AppError
+from app.core.rate_limit import rate_limit
 from app.schemas.market import (
     Comparison,
     MonteCarloRequest,
@@ -41,13 +42,21 @@ def compare(
     return Comparison(**svc.compare(session, id_list, period, currency))
 
 
-@router.post("/risk/analyze", summary="Multi-asset risk comparison")
+@router.post(
+    "/risk/analyze",
+    summary="Multi-asset risk comparison",
+    dependencies=[rate_limit("risk", 30)],
+)
 def risk_analyze(session: DbSession, body: RiskLabRequest) -> dict[str, Any]:
     md.period_start(body.period, svc.today_utc())
     return svc.risk_lab(session, body.instrument_ids, body.period, body.confidence, body.window)
 
 
-@router.post("/risk/monte-carlo", summary="Seeded Monte Carlo simulation")
+@router.post(
+    "/risk/monte-carlo",
+    summary="Seeded Monte Carlo simulation",
+    dependencies=[rate_limit("simulation", 12)],
+)
 def risk_monte_carlo(session: DbSession, body: MonteCarloRequest) -> dict[str, Any]:
     return svc.run_monte_carlo(
         session,

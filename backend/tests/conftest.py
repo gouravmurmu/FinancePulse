@@ -21,3 +21,12 @@ def make_client(monkeypatch: pytest.MonkeyPatch):
     get_settings.cache_clear()
     get_engine.cache_clear()
     _session_factory.cache_clear()
+
+
+@pytest.fixture(autouse=True)
+def _reset_rate_limits():
+    from app.core.rate_limit import limiter
+
+    limiter.reset()
+    yield
+    limiter.reset()

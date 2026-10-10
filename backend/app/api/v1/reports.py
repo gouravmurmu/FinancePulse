@@ -8,6 +8,7 @@ from fastapi import APIRouter, Response
 
 from app.api.deps import DbSession, UserId
 from app.api.v1.instruments import PeriodQ
+from app.core.rate_limit import rate_limit
 from app.services import portfolio_service as ps
 from app.services import report_service as rs
 
@@ -30,7 +31,11 @@ def _file(body: bytes | str, media: str, name: str, private: bool) -> Response:
     )
 
 
-@router.get("/asset/{instrument_id}/pdf", summary="One-asset PDF report")
+@router.get(
+    "/asset/{instrument_id}/pdf",
+    summary="One-asset PDF report",
+    dependencies=[rate_limit("reports", 10)],
+)
 def asset_pdf(session: DbSession, instrument_id: str) -> Response:
     return _file(
         rs.asset_pdf(session, instrument_id), "application/pdf", _slug(instrument_id), False
@@ -43,7 +48,11 @@ def asset_csv(session: DbSession, instrument_id: str, period: PeriodQ = "5Y") ->
     return _file(body, "text/csv", f"{_slug(instrument_id)}-prices", False)
 
 
-@router.get("/portfolio/{portfolio_id}/pdf", summary="Portfolio PDF report")
+@router.get(
+    "/portfolio/{portfolio_id}/pdf",
+    summary="Portfolio PDF report",
+    dependencies=[rate_limit("reports", 10)],
+)
 def portfolio_pdf(user: UserId, session: DbSession, portfolio_id: uuid.UUID) -> Response:
     p = ps.get_portfolio(session, user, portfolio_id)
     return _file(rs.portfolio_pdf(session, p), "application/pdf", _slug(p.name), True)

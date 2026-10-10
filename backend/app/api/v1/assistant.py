@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 from app.ai.provider import ChatProvider, get_provider
 from app.api.deps import DbSession, UserId
 from app.core.config import Settings
+from app.core.rate_limit import rate_limit
 from app.services import assistant_service
 
 router = APIRouter(prefix="/assistant", tags=["assistant"])
@@ -55,7 +56,11 @@ def assistant_usage(user: UserId, session: DbSession, request: Request) -> dict[
     }
 
 
-@router.post("/chat", summary="Ask the research assistant")
+@router.post(
+    "/chat",
+    summary="Ask the research assistant",
+    dependencies=[rate_limit("assistant", 6)],
+)
 def chat(user: UserId, session: DbSession, request: Request, body: ChatRequest) -> dict[str, Any]:
     settings: Settings = request.app.state.settings
     return assistant_service.answer(
