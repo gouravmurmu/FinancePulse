@@ -26,7 +26,7 @@ jobs:
       # Accept a repository secret or, if saved on the Variables tab, a variable.
       SEC_CONTACT_EMAIL: ${{ secrets.SEC_CONTACT_EMAIL || vars.SEC_CONTACT_EMAIL }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Check secrets
         id: secrets
         run: |
@@ -38,7 +38,7 @@ jobs:
             echo "::warning::SEC_CONTACT_EMAIL is not set, so fundamentals are skipped."
             echo "skip=true" >> "$GITHUB_OUTPUT"
           fi
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         if: steps.secrets.outputs.skip != 'true'
         with:
           python-version: "3.12"
