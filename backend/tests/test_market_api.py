@@ -13,8 +13,16 @@ pytestmark = [
     pytest.mark.skipif(not os.getenv("TEST_DATABASE_URL"), reason="TEST_DATABASE_URL not set"),
 ]
 
-SEEDED = ["idx:us:SPX", "idx:in:NIFTY50", "eq:us:AAPL", "eq:in:TCS", "crypto:BTC",
-          "metal:XAU:comex-fut", "metal:XAG:comex-fut", "fx:USDINR"]
+SEEDED = [
+    "idx:us:SPX",
+    "idx:in:NIFTY50",
+    "eq:us:AAPL",
+    "eq:in:TCS",
+    "crypto:BTC",
+    "metal:XAU:comex-fut",
+    "metal:XAG:comex-fut",
+    "fx:USDINR",
+]
 START_PRICE = {"fx:USDINR": 83.0, "metal:XAU:comex-fut": 2000.0, "metal:XAG:comex-fut": 25.0}
 
 
@@ -63,11 +71,21 @@ def client():
             days = all_days if inst_id.startswith("crypto") else weekdays
             ccy = next(i.currency for i in UNIVERSE if i.id == inst_id)
             for d, p in _bars(inst_id, days):
-                obs.append(Observation(
-                    instrument_id=inst_id, provider="yfinance", trading_date=d, retrieved_at=now,
-                    currency=ccy, close=p, open=p, high=p * 1.01, low=p * 0.99, adj_close=p,
-                    volume=1000.0,
-                ))
+                obs.append(
+                    Observation(
+                        instrument_id=inst_id,
+                        provider="yfinance",
+                        trading_date=d,
+                        retrieved_at=now,
+                        currency=ccy,
+                        close=p,
+                        open=p,
+                        high=p * 1.01,
+                        low=p * 0.99,
+                        adj_close=p,
+                        volume=1000.0,
+                    )
+                )
         market_store.upsert_observations(s, obs)
         run = market_store.start_job(s, "refresh_market_data")
         market_store.finish_job(s, run, "success", {"failed": []})
@@ -82,8 +100,10 @@ def test_search_ranks_exact_alias_first(client):
     res = client.get("/api/v1/instruments", params={"q": "apple"})
     assert res.status_code == 200
     assert res.json()[0]["id"] == "eq:us:AAPL"
-    assert client.get("/api/v1/instruments", params={"q": "nifty"}).json()[0]["id"].startswith(
-        "idx:in:"
+    assert (
+        client.get("/api/v1/instruments", params={"q": "nifty"})
+        .json()[0]["id"]
+        .startswith("idx:in:")
     )
 
 
@@ -161,7 +181,10 @@ def test_overview(client):
 def test_risk_lab_mixed_calendar(client):
     res = client.post(
         "/api/v1/risk/analyze",
-        json={"instrument_ids": ["crypto:BTC", "idx:us:SPX", "metal:XAU:comex-fut"], "period": "1Y"},
+        json={
+            "instrument_ids": ["crypto:BTC", "idx:us:SPX", "metal:XAU:comex-fut"],
+            "period": "1Y",
+        },
     )
     assert res.status_code == 200, res.text
     body = res.json()
@@ -179,8 +202,13 @@ def test_risk_lab_validation(client):
 
 
 def test_monte_carlo_reproducible(client):
-    payload = {"weights": {"idx:us:SPX": 0.6, "metal:XAU:comex-fut": 0.4}, "horizon_days": 60,
-               "paths": 500, "seed": 3, "lookback": "1Y"}
+    payload = {
+        "weights": {"idx:us:SPX": 0.6, "metal:XAU:comex-fut": 0.4},
+        "horizon_days": 60,
+        "paths": 500,
+        "seed": 3,
+        "lookback": "1Y",
+    }
     a = client.post("/api/v1/risk/monte-carlo", json=payload).json()
     b = client.post("/api/v1/risk/monte-carlo", json=payload).json()
     assert a["percentiles"] == b["percentiles"]
@@ -191,8 +219,10 @@ def test_monte_carlo_reproducible(client):
 def test_stress_preset(client):
     res = client.post(
         "/api/v1/risk/stress",
-        json={"weights": {"idx:us:SPX": 50, "crypto:BTC": 30, "metal:XAU:comex-fut": 20},
-              "preset": "equity_crash"},
+        json={
+            "weights": {"idx:us:SPX": 50, "crypto:BTC": 30, "metal:XAU:comex-fut": 20},
+            "preset": "equity_crash",
+        },
     ).json()
     assert res["shocks"] == {"idx:us:SPX": -0.2, "crypto:BTC": -0.35, "metal:XAU:comex-fut": 0.05}
     assert res["total"] == pytest.approx(0.5 * -0.2 + 0.3 * -0.35 + 0.2 * 0.05)
