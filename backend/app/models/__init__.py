@@ -1,4 +1,5 @@
 from app.models.alerts import AlertEvent, AlertRule, AnomalyFlag
+from app.models.forecast import ForecastRun
 from app.models.market import (
     Fundamental,
     Instrument,
@@ -14,6 +15,7 @@ __all__ = [
     "AlertEvent",
     "AlertRule",
     "AnomalyFlag",
+    "ForecastRun",
     "Fundamental",
     "Instrument",
     "InstrumentAlias",

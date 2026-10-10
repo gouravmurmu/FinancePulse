@@ -30,8 +30,11 @@ tiers.
 - **Alerts** on price levels, daily moves, volatility and statistical
   anomalies, checked after each data refresh and shown in the app. Unusual
   activity flags on every asset page.
+- **Forecast check** on asset pages: simple baseline models tested walk-forward
+  on past data; when none beats "no change", the page says so
+  ([docs/MODELS.md](docs/MODELS.md)).
 
-Not built yet: AI assistant, news and forecasts (rest of step 3). Those
+Not built yet: AI assistant and news (rest of step 3). Those
 sections say so in the app. See [PLAN.md](PLAN.md).
 
 ## Stack

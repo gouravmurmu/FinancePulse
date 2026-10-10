@@ -27,7 +27,7 @@ module = ["app.analytics.*", "app.providers.*", "app.services.*", "app.api.*"]
 disable_error_code = ["call-overload", "arg-type", "no-any-return", "index", "attr-defined"]
 
 [[tool.mypy.overrides]]
-module = ["yfinance", "yfinance.*"]
+module = ["yfinance", "yfinance.*", "statsmodels", "statsmodels.*"]
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]

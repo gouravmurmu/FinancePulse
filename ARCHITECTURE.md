@@ -70,7 +70,10 @@ Step 3 adds user-owned tables, each with owner-only RLS and isolation tests:
 `anomalies` (public read) holds statistical flags, one per instrument, day and
 kind, written by `jobs/scan_alerts.py` after each market data refresh.
 
-Later parts add news and sentiment, forecasts and reports. Every user-owned table gets owner-only
+`forecast_runs` (public read) holds daily baseline forecasts and their
+walk-forward scores, written by `jobs/run_forecasts.py` (see docs/MODELS.md).
+
+Later parts add news and sentiment and reports. Every user-owned table gets owner-only
 RLS policies and an isolation test.
 
 ## Provider interface (step 2)

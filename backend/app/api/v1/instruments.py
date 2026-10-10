@@ -1,5 +1,5 @@
 from datetime import UTC, datetime
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Query
 
@@ -15,7 +15,7 @@ from app.schemas.market import (
     Snapshot,
 )
 from app.services import analytics_service as svc
-from app.services import fundamentals_service
+from app.services import forecast_service, fundamentals_service
 from app.services import market_data as md
 
 router = APIRouter(prefix="/instruments", tags=["instruments"])
@@ -127,3 +127,9 @@ def instrument_risk(
 def instrument_fundamentals(session: DbSession, instrument_id: str) -> Fundamentals:
     inst = md.get_instrument(session, instrument_id)
     return Fundamentals(**fundamentals_service.fundamentals(session, inst))
+
+
+@router.get("/{instrument_id}/forecast", summary="Stored baseline forecasts with evaluation")
+def instrument_forecast(session: DbSession, instrument_id: str) -> dict[str, Any]:
+    inst = md.get_instrument(session, instrument_id)
+    return forecast_service.latest(session, inst)

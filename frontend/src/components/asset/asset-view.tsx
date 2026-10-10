@@ -25,6 +25,7 @@ import {
 } from "@/lib/market";
 import { seriesColor } from "@/lib/series";
 import { AnomaliesCard } from "./anomalies-card";
+import { ForecastCard } from "./forecast-card";
 import { FundamentalsPanel } from "./fundamentals";
 import { RiskPanel } from "./risk-panel";
 
@@ -72,10 +73,11 @@ export function AssetView({ id }: { id: string }) {
             currency={currency}
             assetClass={d.instrument.asset_class}
           />
-          <div className="grid gap-6 xl:grid-cols-12">
+          <div className="grid gap-6 xl:grid-cols-12 [&>*]:min-w-0">
             <div className="xl:col-span-8">
               <div className="flex flex-col gap-6">
                 <RiskPanel id={id} period={period} />
+                <ForecastCard id={id} assetClass={d.instrument.asset_class} />
                 {d.instrument.asset_class === "equity" ? <FundamentalsPanel id={id} /> : null}
               </div>
             </div>

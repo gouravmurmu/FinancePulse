@@ -292,6 +292,50 @@ export const FundamentalsSchema = z.object({
 });
 export type Fundamentals = z.infer<typeof FundamentalsSchema>;
 
+const ForecastModelSchema = z.object({
+  model: z.string(),
+  label: z.string(),
+  mae: z.number(),
+  rmse: z.number(),
+  directional_accuracy: z.number().nullable(),
+  n: z.number(),
+  p_value: z.number().nullable(),
+});
+
+const ForecastHorizonSchema = z.object({
+  horizon_days: z.number(),
+  as_of: z.string(),
+  model_version: z.string(),
+  best_model: z.string(),
+  best_model_label: z.string(),
+  beats_baseline: z.boolean(),
+  last_close: z.number(),
+  point: z.number(),
+  lower: z.number(),
+  upper: z.number(),
+  change_pct: z.number().nullable(),
+  interval: z.number(),
+  train_start: z.string(),
+  eval_start: z.string(),
+  eval_end: z.string(),
+  skill: z.number().nullable(),
+  up_share: z.number().nullable(),
+  significance: z.number().nullable(),
+  models: z.array(ForecastModelSchema),
+  created_at: z.string(),
+});
+export type ForecastHorizon = z.infer<typeof ForecastHorizonSchema>;
+
+export const ForecastSchema = z.object({
+  instrument_id: z.string(),
+  currency: z.string(),
+  available: z.boolean(),
+  stale: z.boolean(),
+  reason: z.string().nullable(),
+  horizons: z.array(ForecastHorizonSchema),
+});
+export type Forecast = z.infer<typeof ForecastSchema>;
+
 const enc = encodeURIComponent;
 
 /** Market data and analytics endpoints can be slow while Render wakes up. */
@@ -341,6 +385,7 @@ export const marketApi = {
     shocks?: Record<string, number>;
   }) => apiPost(`/api/v1/risk/stress`, body, StressSchema, SLOW),
   stressPresets: () => apiGet(`/api/v1/risk/stress-presets`, StressPresetsSchema),
+  forecast: (id: string) => apiGet(`/api/v1/instruments/${enc(id)}/forecast`, ForecastSchema, SLOW),
 };
 
 export const ASSET_CLASS_LABEL: Record<string, string> = {
