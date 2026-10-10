@@ -48,8 +48,11 @@ Each part ships on its own.
   against no change, shown on asset pages (`docs/MODELS.md`) (done). Headlines
   with attribution and FinBERT sentiment (done; switched on once
   `FINNHUB_API_KEY` is set).
-- **3d AI assistant and reports**: Groq behind a provider interface, tools that
-  call backend functions, per-user budget; PDF and CSV reports.
+- **3d AI assistant and reports**: Groq behind an OpenAI-compatible provider
+  interface, ten tools that call backend services (quotes, risk, comparison,
+  filings, news, forecasts, anomalies, portfolio, stress), claim labels, page
+  context, per-user and shared daily budgets (done; switched on once
+  `LLM_API_KEY` is set). PDF and CSV reports.
 
 ## Key decisions
 - **Canonical instrument IDs** are readable strings (`eq:us:AAPL`,

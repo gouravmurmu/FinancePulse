@@ -33,6 +33,16 @@ class Settings(BaseSettings):
     supabase_jwt_secret: str | None = None
     jwt_audience: str = "authenticated"
 
+    # AI assistant: any OpenAI-compatible endpoint (Groq by default). Without a
+    # key the assistant explains that AI is not configured; nothing else changes.
+    llm_api_key: str | None = None
+    llm_base_url: str = "https://api.groq.com/openai/v1"
+    llm_model: str = "llama-3.3-70b-versatile"
+    # Budgets that keep usage inside the provider's free quota.
+    ai_requests_per_user_day: int = 25
+    ai_tokens_per_user_day: int = 40_000
+    ai_tokens_per_day: int = 300_000
+
     @field_validator("cors_origins", mode="before")
     @classmethod
     def _split_origins(cls, value: object) -> object:

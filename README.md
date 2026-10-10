@@ -37,8 +37,13 @@ tiers.
 - **News** with source links and FinBERT headline tone for US stocks, ETFs
   and major coins (needs a free Finnhub key).
 
-Not built yet: AI assistant and reports (rest of step 3). Those
-sections say so in the app. See [PLAN.md](PLAN.md).
+- **AI assistant** (page and an "Ask AI" panel that knows the asset or
+  portfolio you're viewing): the model only plans and explains; every number
+  comes from MarketPulse tools, and each statement is labelled as fact,
+  computed, model estimate or hypothesis. Free tier via Groq with a daily
+  allowance per user (needs `LLM_API_KEY`).
+
+Not built yet: PDF reports (rest of step 3). See [PLAN.md](PLAN.md). See [PLAN.md](PLAN.md).
 
 ## Stack
 Next.js 15 · React 19 · TypeScript · Tailwind CSS v4 · TanStack Query · Zod ·

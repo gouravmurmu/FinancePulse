@@ -27,7 +27,7 @@ do $$
 declare t text;
 begin
   foreach t in array array['portfolios', 'transactions', 'watchlists', 'watchlist_items',
-                         'alert_rules', 'alert_events'] loop
+                         'alert_rules', 'alert_events', 'ai_usage'] loop
     if not exists (select 1 from pg_constraint where conname = 'fk_' || t || '_user_id_users') then
       execute format(
         'alter table public.%I add constraint %I foreign key (user_id) references auth.users (id) on delete cascade',

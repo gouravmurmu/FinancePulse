@@ -39,6 +39,12 @@ Resend's free tier) before inviting many users.
 - `SUPABASE_URL`: `https://<ref>.supabase.co`; the API verifies sign-in tokens
   against its public keys (`/auth/v1/.well-known/jwks.json`)
 - `SUPABASE_JWT_SECRET` (only for projects still on the legacy shared secret)
+- `LLM_API_KEY` (optional): a free Groq API key (console.groq.com) for the AI
+  assistant. Without it the assistant says it is not switched on. `LLM_BASE_URL`
+  and `LLM_MODEL` default to Groq's OpenAI-compatible endpoint and
+  `llama-3.3-70b-versatile`; any OpenAI-compatible provider works.
+  Limits: `AI_REQUESTS_PER_USER_DAY` (25), `AI_TOKENS_PER_USER_DAY` (40000),
+  `AI_TOKENS_PER_DAY` (300000, shared, kept under Groq's free daily quota).
 
 **GitHub Actions (repository secrets)**
 - `DATABASE_URL`: same value as Render; used by the market data and fundamentals jobs.

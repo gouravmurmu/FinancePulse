@@ -1,20 +1,23 @@
 import type { Metadata } from "next";
-import { PlannedSection } from "@/components/system/planned-section";
+import { AssistantChat } from "@/components/assistant/chat";
+import { Card } from "@/components/ui/card";
 
 export const metadata: Metadata = { title: "AI Assistant" };
 
 export default function AssistantPage() {
   return (
-    <PlannedSection
-      title="AI Assistant"
-      step={3}
-      summary="Ask questions about markets and your portfolio. Every number comes from the backend, with sources and timestamps."
-      features={[
-        "Aware of the instrument or portfolio you are viewing",
-        "Answers cite retrieved data and computed metrics",
-        "Labels facts, statistics, estimates and hypotheses",
-        "Research aid only, never buy or sell advice",
-      ]}
-    />
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
+      <header>
+        <h1 className="text-xl font-semibold">AI Assistant</h1>
+        <p className="mt-1 text-sm text-muted">
+          Ask about markets and your portfolio. The assistant looks up prices, risk, filings, news
+          and forecasts in MarketPulse, labels each statement as a fact, a computed figure, a model
+          estimate or its own reading, and never tells you what to buy or sell.
+        </p>
+      </header>
+      <Card className="flex min-h-[60dvh] flex-col">
+        <AssistantChat />
+      </Card>
+    </div>
   );
 }

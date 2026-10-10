@@ -1,3 +1,4 @@
+from app.models.ai import AIUsage
 from app.models.alerts import AlertEvent, AlertRule, AnomalyFlag
 from app.models.forecast import ForecastRun
 from app.models.market import (
@@ -13,6 +14,7 @@ from app.models.portfolio import Portfolio, Transaction, Watchlist, WatchlistIte
 from app.models.user import Profile
 
 __all__ = [
+    "AIUsage",
     "AlertEvent",
     "AlertRule",
     "AnomalyFlag",

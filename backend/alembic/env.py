@@ -18,6 +18,7 @@ EXTERNAL_FKS = {
     "fk_watchlist_items_user_id_users",
     "fk_alert_rules_user_id_users",
     "fk_alert_events_user_id_users",
+    "fk_ai_usage_user_id_users",
 }
 
 

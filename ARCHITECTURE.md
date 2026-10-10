@@ -76,6 +76,18 @@ walk-forward scores, written by `jobs/run_forecasts.py` (see docs/MODELS.md).
 `news_articles` and `news_instruments` (public read) hold headlines, their
 FinBERT scores and which instruments they mention.
 
+`ai_usage` holds assistant requests and tokens per user per UTC day. Users can
+read their own row; only the API writes it, and it enforces the daily limits.
+
+## AI assistant (step 3d)
+`app/ai/provider.py` wraps any OpenAI-compatible chat API (Groq by default).
+`app/ai/tools.py` exposes ten read-only tools that call the same services as
+the REST API, scoped to the signed-in user. `app/services/assistant_service.py`
+runs the loop: the model may call tools for up to four rounds, then must
+answer; every number in an answer comes from a tool result, which the system
+prompt requires and the UI shows ("Data used", sources). Budgets are checked
+before each request and recorded after it.
+
 Later parts add saved reports. Every user-owned table gets owner-only
 RLS policies and an isolation test.
 
