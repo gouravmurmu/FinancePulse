@@ -22,7 +22,8 @@ jobs:
       - run: python -m jobs.record_fixtures tests/fixtures/recorded
         working-directory: backend
         env:
-          SEC_CONTACT_EMAIL: ${{ secrets.SEC_CONTACT_EMAIL }}
+          # Accept a repository secret or, if saved on the Variables tab, a variable.
+      SEC_CONTACT_EMAIL: ${{ secrets.SEC_CONTACT_EMAIL || vars.SEC_CONTACT_EMAIL }}
       - name: Push to fixtures branch
         run: |
           git config user.name "github-actions[bot]"

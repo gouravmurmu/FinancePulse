@@ -23,7 +23,8 @@ jobs:
         working-directory: backend
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      SEC_CONTACT_EMAIL: ${{ secrets.SEC_CONTACT_EMAIL }}
+      # Accept a repository secret or, if saved on the Variables tab, a variable.
+      SEC_CONTACT_EMAIL: ${{ secrets.SEC_CONTACT_EMAIL || vars.SEC_CONTACT_EMAIL }}
     steps:
       - uses: actions/checkout@v4
       - name: Check secrets
