@@ -23,7 +23,7 @@ jobs:
         working-directory: backend
         env:
           # Accept a repository secret or, if saved on the Variables tab, a variable.
-      SEC_CONTACT_EMAIL: ${{ secrets.SEC_CONTACT_EMAIL || vars.SEC_CONTACT_EMAIL }}
+          SEC_CONTACT_EMAIL: ${{ secrets.SEC_CONTACT_EMAIL || vars.SEC_CONTACT_EMAIL }}
       - name: Push to fixtures branch
         run: |
           git config user.name "github-actions[bot]"
