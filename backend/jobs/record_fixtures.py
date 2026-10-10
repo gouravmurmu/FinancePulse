@@ -7,6 +7,7 @@ where providers are reachable). Tests never call providers live.
 from __future__ import annotations
 
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -15,7 +16,11 @@ import httpx
 YAHOO_SYMBOLS = ["AAPL", "^NSEI", "BTC-USD", "GC=F", "USDINR=X", "RELIANCE.NS"]
 COINGECKO_IDS = ["bitcoin", "ethereum", "solana"]
 SEC_CIK = "0000320193"  # Apple
-SEC_HEADERS = {"User-Agent": "MarketPulse research app (github.com/gouravmurmu/FinancePulse)"}
+
+def sec_headers() -> dict[str, str] | None:
+    """SEC fair-access policy requires a User-Agent with a contact email."""
+    contact = os.getenv("SEC_CONTACT_EMAIL", "").strip()
+    return {"User-Agent": f"MarketPulse {contact}"} if contact else None
 
 
 def main(out_dir: str) -> int:
@@ -39,9 +44,13 @@ def main(out_dir: str) -> int:
     res.raise_for_status()
     (out / "coingecko_markets.json").write_text(json.dumps(res.json(), indent=1))
 
+    headers = sec_headers()
+    if headers is None:
+        print("SEC_CONTACT_EMAIL not set; skipping SEC fixture")
+        return 0
     res = httpx.get(
         f"https://data.sec.gov/api/xbrl/companyfacts/CIK{SEC_CIK}.json",
-        headers=SEC_HEADERS,
+        headers=headers,
         timeout=30,
     )
     res.raise_for_status()
