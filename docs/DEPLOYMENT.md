@@ -1,10 +1,16 @@
 # Deployment
 
-| Tier | Where | How it deploys |
-|---|---|---|
-| Web | Vercel project `marketpulse` (root `frontend/`) | Every push to `main` (production) and every branch (preview) |
-| API | Render service `marketpulse-api` (Docker, `backend/`) | Every push to `main` (`autoDeploy`); migrations run on boot |
-| Database | Supabase project `marketpulse` | Alembic migrations, applied by the API on start |
+| Tier | Where | Live URL | How it deploys |
+|---|---|---|---|
+| Web | Vercel project `marketpulse` (root `frontend/`) | https://marketpulse-grv4.vercel.app | Every push to `main` (production) and every branch (preview) |
+| API | Render service `marketpulse-api` (Docker, Singapore) | https://marketpulse-api-kp70.onrender.com | Every push to `main`; migrations run on boot |
+| Database | Supabase project `marketpulse` (ap-south-1, Mumbai) | (private) | Alembic migrations, applied by the API on start |
+
+## First-time database setup
+Run `infra/supabase/setup.sql` as `postgres` (Supabase SQL editor). It creates
+the `marketpulse_api` login used by Render and grants what migrations need.
+Its last statement adds the `profiles → auth.users` foreign key, which the app
+role is not allowed to create; run it after the first deploy.
 
 ## Environment variables
 
@@ -13,9 +19,10 @@
 - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`: public values from Supabase (step 3)
 
 **Render (API)**
-- `DATABASE_URL`: Supabase **session pooler** connection string (IPv4)
+- `DATABASE_URL`: Supabase **session pooler** connection string (IPv4) for the `marketpulse_api` role,
+  `postgresql://marketpulse_api.<ref>:<password>@aws-0-ap-south-1.pooler.supabase.com:5432/postgres?sslmode=require`
 - `CORS_ORIGINS`: the production web URL(s), comma-separated
-- `CORS_ORIGIN_REGEX`: optional, to allow Vercel preview URLs
+- `CORS_ORIGIN_REGEX`: Vercel preview URLs for this account only, `^https://marketpulse-[a-z0-9-]+-grv4\.vercel\.app$`
 - `ENVIRONMENT=production`
 
 Secrets live only in the provider dashboards, never in the repository.

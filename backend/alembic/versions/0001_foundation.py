@@ -134,9 +134,21 @@ def upgrade() -> None:
         sa.CheckConstraint("base_currency in ('USD', 'INR')", name="ck_profiles_base_currency"),
         sa.CheckConstraint("region in ('global', 'india')", name="ck_profiles_region"),
     )
+    # On Supabase the app role cannot be granted REFERENCES on auth.users, so
+    # this foreign key is added by infra/supabase/setup.sql (run as postgres)
+    # instead. Where the migrating role has the privilege (local, CI) it is
+    # created here.
     op.execute(
-        "alter table profiles add constraint fk_profiles_id_users "
-        "foreign key (id) references auth.users (id) on delete cascade"
+        """
+        do $$ begin
+          if has_table_privilege(current_user, 'auth.users', 'REFERENCES') then
+            alter table profiles add constraint fk_profiles_id_users
+              foreign key (id) references auth.users (id) on delete cascade;
+          else
+            raise notice 'fk_profiles_id_users skipped: run infra/supabase/setup.sql';
+          end if;
+        end $$;
+        """
     )
 
     # --- Row Level Security -------------------------------------------------
