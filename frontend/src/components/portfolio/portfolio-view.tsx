@@ -4,11 +4,17 @@ import Link from "next/link";
 import { BriefcaseBusiness, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/auth/auth-provider";
+import { DownloadButton, fileSlug, fileStamp } from "@/components/reports/download-button";
 import { Card } from "@/components/ui/card";
 import { QueryState } from "@/components/ui/query-state";
 import { Segmented } from "@/components/ui/segmented";
 import { EmptyState, SkeletonCard } from "@/components/ui/states";
-import { usePortfolioMutations, usePortfolios, type Portfolio } from "@/lib/portfolio";
+import {
+  useAuthedApi,
+  usePortfolioMutations,
+  usePortfolios,
+  type Portfolio,
+} from "@/lib/portfolio";
 import { buttonClass, errorMessage, inputClass, primaryClass } from "./forms";
 import { Overview } from "./overview";
 import { PerformancePanel } from "./performance";
@@ -136,6 +142,7 @@ function PortfolioHeader({
   onNew: () => void;
 }) {
   const { remove } = usePortfolioMutations();
+  const api = useAuthedApi();
   return (
     <div className="flex flex-wrap items-end gap-3">
       <div>
@@ -161,6 +168,23 @@ function PortfolioHeader({
             </option>
           ))}
         </select>
+        {current && current.transaction_count > 0 ? (
+          <>
+            <DownloadButton
+              kind="pdf"
+              label="Report"
+              className={buttonClass}
+              filename={`${fileSlug(current.name)}-${fileStamp()}.pdf`}
+              fetchBlob={() => api.blob(`/api/v1/reports/portfolio/${current.id}/pdf`)}
+            />
+            <DownloadButton
+              label="Holdings CSV"
+              className={buttonClass}
+              filename={`${fileSlug(current.name)}-holdings-${fileStamp()}.csv`}
+              fetchBlob={() => api.blob(`/api/v1/reports/portfolio/${current.id}/csv`)}
+            />
+          </>
+        ) : null}
         <button type="button" className={buttonClass} onClick={onNew}>
           <Plus size={16} aria-hidden="true" /> New
         </button>

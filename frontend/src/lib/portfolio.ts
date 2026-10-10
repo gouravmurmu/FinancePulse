@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 import { useAuth } from "@/components/auth/auth-provider";
-import { apiGet, apiSend, apiText, qs } from "./api";
+import { apiBlob, apiGet, apiSend, apiText, qs } from "./api";
 import { FreshnessSchema, PointSchema, QuoteSchema } from "./market";
 
 export const PortfolioSchema = z.object({
@@ -193,6 +193,9 @@ export function useAuthedApi() {
       schema: z.ZodType<T>,
     ) {
       return apiSend(method, path, body, schema, { token: await getToken(), timeoutMs: 45_000 });
+    },
+    async blob(path: string) {
+      return apiBlob(path, { token: await getToken() });
     },
     async text(path: string) {
       return apiText(path, { token: await getToken(), timeoutMs: 45_000 });

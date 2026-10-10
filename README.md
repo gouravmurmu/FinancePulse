@@ -9,7 +9,7 @@ tiers.
 
 ## Status
 
-**Build step 2 of 4 done; step 3 in progress (portfolios live).** What works today:
+**Build steps 1 to 3 of 4 done.** What works today:
 - **Markets**: global and India views, USD/INR display, periods from 1 day to
   5 years, index and asset cards with freshness, growth-of-100 comparison,
   gainers and losers, sector heatmap, exchange open/closed status.
@@ -43,7 +43,13 @@ tiers.
   computed, model estimate or hypothesis. Free tier via Groq with a daily
   allowance per user (needs `LLM_API_KEY`).
 
-Not built yet: PDF reports (rest of step 3). See [PLAN.md](PLAN.md). See [PLAN.md](PLAN.md).
+- **Reports**: PDF reports for any asset (price, risk, forecast check,
+  unusual activity, headlines, SEC financials) and for your portfolio
+  (holdings, allocation, performance vs benchmark, risk contribution, stress
+  scenarios), plus price and holdings CSVs. Every report lists its sources
+  and methodology.
+
+Next: step 4, polish and launch. See [PLAN.md](PLAN.md). See [PLAN.md](PLAN.md).
 
 ## Stack
 Next.js 15 · React 19 · TypeScript · Tailwind CSS v4 · TanStack Query · Zod ·

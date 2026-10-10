@@ -88,8 +88,10 @@ answer; every number in an answer comes from a tool result, which the system
 prompt requires and the UI shows ("Data used", sources). Budgets are checked
 before each request and recorded after it.
 
-Later parts add saved reports. Every user-owned table gets owner-only
-RLS policies and an isolation test.
+Reports (`/api/v1/reports/...`) are generated on demand with fpdf2 from the
+same services and are not stored; portfolio reports use the owner check like
+every portfolio endpoint. Every user-owned table gets owner-only RLS policies
+and an isolation test.
 
 ## Provider interface (step 2)
 Each source implements one adapter (`fetch_history`, `fetch_latest`,

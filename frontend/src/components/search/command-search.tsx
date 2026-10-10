@@ -65,10 +65,13 @@ export function CommandSearch() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex h-9 w-full max-w-sm items-center gap-2 rounded-lg border border-border bg-surface px-3 text-sm text-muted hover:border-accent/50"
+        className="flex h-9 w-full min-w-0 max-w-sm items-center gap-2 rounded-lg border border-border bg-surface px-3 text-sm text-muted hover:border-accent/50"
       >
         <Search size={16} aria-hidden="true" />
-        <span className="flex-1 text-left">Search stocks, indices, crypto…</span>
+        <span className="flex-1 truncate text-left">
+          <span className="sm:hidden">Search</span>
+          <span className="hidden sm:inline">Search stocks, indices, crypto…</span>
+        </span>
         <kbd className="hidden rounded border border-border px-1.5 text-xs sm:inline">⌘K</kbd>
       </button>
 

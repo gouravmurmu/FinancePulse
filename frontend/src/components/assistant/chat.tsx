@@ -240,7 +240,7 @@ function Conversation({ compact, limit }: { compact: boolean; limit?: number }) 
             type="submit"
             disabled={!draft.trim() || ask.isPending}
             aria-label="Send question"
-            className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-accent text-white disabled:opacity-40"
+            className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-contrast disabled:opacity-40"
           >
             <ArrowUp size={18} aria-hidden="true" />
           </button>

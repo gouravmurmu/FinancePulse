@@ -118,6 +118,12 @@ export function apiSend<T>(
   return request(method, path, schema, body, options);
 }
 
+/** File downloads (reports). Generous timeout: the API may be waking up. */
+export async function apiBlob(path: string, options: RequestOptions = {}): Promise<Blob> {
+  const res = await send("GET", path, undefined, { timeoutMs: 60_000, ...options });
+  return res.blob();
+}
+
 export async function apiText(path: string, options: RequestOptions = {}): Promise<string> {
   return (await send("GET", path, undefined, options)).text();
 }

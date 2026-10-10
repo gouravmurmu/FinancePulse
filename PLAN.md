@@ -10,7 +10,7 @@ after every step.
 |---|---|---|---|
 | 1. Foundation and first deploy | 0 | Repo layout, design tokens, app shell, FastAPI service, schema + RLS, CI, hosting verification, live web + API + DB | Done |
 | 2. Markets, Research, Risk Lab | 1, 2 | Provider adapters, curated universe, daily refresh job, Markets dashboard, search, asset pages, technicals, fundamentals (where reliable), Risk Lab with tested metrics | Done |
-| 3. Portfolio and intelligence | 3, 4 | Auth, ledger, P&L, allocation, RLS tests per table, AI assistant with tools, sentiment/anomaly/forecast jobs, Monte Carlo, alerts, reports | In progress |
+| 3. Portfolio and intelligence | 3, 4 | Auth, ledger, P&L, allocation, RLS tests per table, AI assistant with tools, sentiment/anomaly/forecast jobs, Monte Carlo, alerts, reports | Done |
 | 4. Polish and launch | 5 | Design verification (screenshots, contrast, Lighthouse ≥ 90), accessibility, monitoring, complete docs, final smoke tests | Planned |
 
 ## Step 1 acceptance
@@ -52,7 +52,8 @@ Each part ships on its own.
   interface, ten tools that call backend services (quotes, risk, comparison,
   filings, news, forecasts, anomalies, portfolio, stress), claim labels, page
   context, per-user and shared daily budgets (done; switched on once
-  `LLM_API_KEY` is set). PDF and CSV reports.
+  `LLM_API_KEY` is set). PDF and CSV reports for assets and portfolios,
+  generated on demand with sources and methodology (done).
 
 ## Key decisions
 - **Canonical instrument IDs** are readable strings (`eq:us:AAPL`,
