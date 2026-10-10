@@ -11,8 +11,16 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
 from app.data.universe import InstrumentDef
-from app.models import Instrument, InstrumentAlias, InstrumentSnapshot, JobRun, MarketObservation
+from app.models import (
+    Fundamental,
+    Instrument,
+    InstrumentAlias,
+    InstrumentSnapshot,
+    JobRun,
+    MarketObservation,
+)
 from app.providers.base import Observation, Snapshot
+from app.providers.sec import FundamentalFact
 
 BATCH = 1000
 
@@ -138,6 +146,36 @@ def upsert_snapshots(session: Session, snapshots: list[Snapshot]) -> int:
             )
         )
     return len(snapshots)
+
+
+def upsert_fundamentals(session: Session, facts: list[FundamentalFact]) -> int:
+    for f in facts:
+        values = {
+            "instrument_id": f.instrument_id,
+            "concept": f.concept,
+            "fiscal_year": f.fiscal_year,
+            "period_start": f.period_start,
+            "period_end": f.period_end,
+            "value": f.value,
+            "unit": f.unit,
+            "source_tag": f.source_tag,
+            "form": f.form,
+            "filed": f.filed,
+            "accession": f.accession,
+            "retrieved_at": f.retrieved_at,
+        }
+        stmt = insert(Fundamental).values(values)
+        session.execute(
+            stmt.on_conflict_do_update(
+                constraint="uq_fundamentals_key",
+                set_={
+                    k: v
+                    for k, v in values.items()
+                    if k not in ("instrument_id", "concept", "period_end")
+                },
+            )
+        )
+    return len(facts)
 
 
 def latest_trading_date(session: Session, instrument_id: str) -> datetime | None:

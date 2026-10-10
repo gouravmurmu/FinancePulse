@@ -1,0 +1,51 @@
+name: Fundamentals refresh
+
+# US company financials from SEC EDGAR, weekly (companies file 10-Ks yearly).
+# Needs the SEC_CONTACT_EMAIL secret: SEC rejects requests without a contact.
+on:
+  schedule:
+    - cron: "0 6 * * 0"
+  workflow_dispatch:
+
+concurrency:
+  group: fundamentals
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      SEC_CONTACT_EMAIL: ${{ secrets.SEC_CONTACT_EMAIL }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check secrets
+        id: secrets
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::Add the DATABASE_URL repository secret."
+            exit 1
+          fi
+          if [ -z "$SEC_CONTACT_EMAIL" ]; then
+            echo "::warning::SEC_CONTACT_EMAIL is not set, so fundamentals are skipped."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.secrets.outputs.skip != 'true'
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements/*.txt
+      - if: steps.secrets.outputs.skip != 'true'
+        run: pip install -r requirements/api.txt
+      - if: steps.secrets.outputs.skip != 'true'
+        run: alembic upgrade head
+      - if: steps.secrets.outputs.skip != 'true'
+        run: python -m jobs.refresh_fundamentals

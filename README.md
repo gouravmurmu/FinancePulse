@@ -9,16 +9,21 @@ tiers.
 
 ## Status
 
-**Build step 1 of 4 (foundation).** What works today:
-- App shell with all six sections, dark and light themes, mobile layout.
-- FastAPI service with health check, consistent errors and structured logs.
-- Database schema with Row Level Security, with tests proving user isolation.
-- CI for lint, types and tests on every push.
-- Live status panel showing web, API and database health, including the
-  "waking up" state when the free API host is asleep.
+**Build step 2 of 4 done (Markets, Research, Risk Lab).** What works today:
+- **Markets**: global and India views, USD/INR display, periods from 1 day to
+  5 years, index and asset cards with freshness, growth-of-100 comparison,
+  gainers and losers, sector heatmap, exchange open/closed status.
+- **Search** (⌘K) and **Research** across 56 instruments.
+- **Asset pages**: line and candlestick charts with volume, SMA/EMA/Bollinger,
+  RSI and MACD, a risk panel (volatility, Sharpe, Sortino, drawdown, VaR,
+  expected shortfall, beta), crypto market stats, gold/silver context, and US
+  company financials from SEC filings.
+- **Risk Lab**: compare 2 to 8 assets, correlation, rolling correlation,
+  drawdowns, a seeded Monte Carlo simulation and stress scenarios.
+- Real daily data refreshed twice a day; 5 years of history stored.
 
-Not built yet: market data, research pages, Risk Lab, portfolio, AI assistant,
-alerts. Those sections say so in the app. See [PLAN.md](PLAN.md).
+Not built yet: portfolio, AI assistant, alerts (steps 3 and 4). Those sections
+say so in the app. See [PLAN.md](PLAN.md).
 
 ## Stack
 Next.js 15 · React 19 · TypeScript · Tailwind CSS v4 · TanStack Query · Zod ·
@@ -48,4 +53,5 @@ Full details: [docs/HOSTING.md](docs/HOSTING.md).
 ## Docs
 [PLAN.md](PLAN.md) · [ARCHITECTURE.md](ARCHITECTURE.md) ·
 [docs/HOSTING.md](docs/HOSTING.md) · [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) ·
-[docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md)
+[docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md) ·
+[docs/DATA_SOURCES.md](docs/DATA_SOURCES.md) · [docs/METHODOLOGY.md](docs/METHODOLOGY.md)

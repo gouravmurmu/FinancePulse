@@ -23,6 +23,7 @@ import {
   type Period,
 } from "@/lib/market";
 import { seriesColor } from "@/lib/series";
+import { FundamentalsPanel } from "./fundamentals";
 import { RiskPanel } from "./risk-panel";
 
 const OVERLAYS = [
@@ -71,13 +72,15 @@ export function AssetView({ id }: { id: string }) {
           />
           <div className="grid gap-6 xl:grid-cols-12">
             <div className="xl:col-span-8">
-              <RiskPanel id={id} period={period} />
+              <div className="flex flex-col gap-6">
+                <RiskPanel id={id} period={period} />
+                {d.instrument.asset_class === "equity" ? <FundamentalsPanel id={id} /> : null}
+              </div>
             </div>
             <div className="flex flex-col gap-6 xl:col-span-4">
               <AboutCard d={d} />
               {d.snapshot ? <CryptoCard d={d} /> : null}
               {d.metal_context ? <MetalCard d={d} /> : null}
-              {d.instrument.asset_class === "equity" ? <FundamentalsCard d={d} /> : null}
               <RelatedCard d={d} />
             </div>
           </div>
@@ -356,19 +359,6 @@ function MetalCard({ d }: { d: Detail }) {
       <p className="mt-2 text-xs text-subtle">
         Futures and ETF prices are not the same as Indian retail gold or silver rates, which add
         import duty, GST and dealer premiums.
-      </p>
-    </Card>
-  );
-}
-
-function FundamentalsCard({ d }: { d: Detail }) {
-  return (
-    <Card>
-      <CardHeader title="Fundamentals" />
-      <p className="text-sm text-muted">
-        {d.instrument.country === "US"
-          ? "Company financials from SEC filings are being added."
-          : "Fundamentals not available. There is no free, reliable source of Indian company financials."}
       </p>
     </Card>
   );

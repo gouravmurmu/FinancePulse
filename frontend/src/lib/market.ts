@@ -255,6 +255,43 @@ export const StressPresetsSchema = z.array(
   z.object({ id: z.string(), label: z.string(), description: z.string() }),
 );
 
+const n = z.number().nullable();
+export const FundamentalsSchema = z.object({
+  instrument_id: z.string(),
+  available: z.boolean(),
+  reason: z.string().nullable(),
+  currency: z.string(),
+  source: z.string(),
+  last_filed: z.string().nullable(),
+  retrieved_at: z.string().nullable(),
+  years: z.array(
+    z.object({
+      fiscal_year: z.number(),
+      period_end: z.string(),
+      revenue: n,
+      gross_profit: n,
+      operating_income: n,
+      net_income: n,
+      eps_diluted: n,
+      operating_cash_flow: n,
+      capex: n,
+      total_assets: n,
+      total_liabilities: n,
+      equity: n,
+      long_term_debt: n,
+      cash: n,
+      gross_margin: n,
+      operating_margin: n,
+      net_margin: n,
+      free_cash_flow: n,
+      debt_to_equity: n,
+      revenue_growth: n,
+      net_income_growth: n,
+    }),
+  ),
+});
+export type Fundamentals = z.infer<typeof FundamentalsSchema>;
+
 const enc = encodeURIComponent;
 
 /** Market data and analytics endpoints can be slow while Render wakes up. */
@@ -280,6 +317,8 @@ export const marketApi = {
       IndicatorsSchema,
       SLOW,
     ),
+  fundamentals: (id: string) =>
+    apiGet(`/api/v1/instruments/${enc(id)}/fundamentals`, FundamentalsSchema, SLOW),
   risk: (id: string, period: Period) =>
     apiGet(`/api/v1/instruments/${enc(id)}/risk${qs({ period })}`, InstrumentRiskSchema, SLOW),
   riskLab: (body: {

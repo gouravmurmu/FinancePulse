@@ -25,6 +25,19 @@ role is not allowed to create; run it after the first deploy.
 - `CORS_ORIGIN_REGEX`: Vercel preview URLs for this account only, `^https://marketpulse-[a-z0-9-]+-grv4\.vercel\.app$`
 - `ENVIRONMENT=production`
 
+**GitHub Actions (repository secrets)**
+- `DATABASE_URL`: same value as Render; used by the market data and fundamentals jobs.
+- `SEC_CONTACT_EMAIL`: contact email SEC requires in the User-Agent. Without it the
+  weekly fundamentals job is skipped with a warning.
+- `COINGECKO_API_KEY` (optional): free CoinGecko Demo key for a higher rate limit.
+
+## Scheduled jobs
+| Workflow | Schedule (UTC) | Manual run |
+|---|---|---|
+| `market-data.yml` | 11:00 and 22:30 daily | `backfill` (5 years) and `only` (instrument IDs) inputs |
+| `fundamentals.yml` | Sundays 06:00 | yes |
+| `record-fixtures.yml` | manual only | pushes real provider samples to `fixtures/recorded` |
+
 Secrets live only in the provider dashboards, never in the repository.
 
 ## Running locally

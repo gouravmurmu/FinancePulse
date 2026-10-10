@@ -188,3 +188,38 @@ class StressRequest(BaseModel):
     weights: dict[str, float] = Field(min_length=1, max_length=20)
     shocks: dict[str, float] | None = None
     preset: str | None = None
+
+
+class FundamentalYear(BaseModel):
+    fiscal_year: int
+    period_end: date
+    revenue: float | None
+    gross_profit: float | None
+    operating_income: float | None
+    net_income: float | None
+    eps_diluted: float | None
+    operating_cash_flow: float | None
+    capex: float | None
+    total_assets: float | None
+    total_liabilities: float | None
+    equity: float | None
+    long_term_debt: float | None
+    cash: float | None
+    gross_margin: float | None
+    operating_margin: float | None
+    net_margin: float | None
+    free_cash_flow: float | None
+    debt_to_equity: float | None
+    revenue_growth: float | None
+    net_income_growth: float | None
+
+
+class Fundamentals(BaseModel):
+    instrument_id: str
+    available: bool
+    reason: str | None
+    currency: str
+    source: str
+    years: list[FundamentalYear]
+    last_filed: date | None
+    retrieved_at: datetime | None

@@ -5,6 +5,7 @@ from fastapi import APIRouter, Query
 
 from app.api.deps import DbSession
 from app.schemas.market import (
+    Fundamentals,
     History,
     Indicators,
     InstrumentDetail,
@@ -14,6 +15,7 @@ from app.schemas.market import (
     Snapshot,
 )
 from app.services import analytics_service as svc
+from app.services import fundamentals_service
 from app.services import market_data as md
 
 router = APIRouter(prefix="/instruments", tags=["instruments"])
@@ -119,3 +121,9 @@ def instrument_risk(
     if benchmark:
         md.get_instrument(session, benchmark)
     return InstrumentRisk(**svc.instrument_risk(session, inst, period, benchmark, confidence))
+
+
+@router.get("/{instrument_id}/fundamentals", response_model=Fundamentals)
+def instrument_fundamentals(session: DbSession, instrument_id: str) -> Fundamentals:
+    inst = md.get_instrument(session, instrument_id)
+    return Fundamentals(**fundamentals_service.fundamentals(session, inst))

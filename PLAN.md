@@ -9,7 +9,7 @@ after every step.
 | Step | Spec phases | Delivers | Status |
 |---|---|---|---|
 | 1. Foundation and first deploy | 0 | Repo layout, design tokens, app shell, FastAPI service, schema + RLS, CI, hosting verification, live web + API + DB | Done |
-| 2. Markets, Research, Risk Lab | 1, 2 | Provider adapters, curated universe, daily refresh job, Markets dashboard, search, asset pages, technicals, fundamentals (where reliable), Risk Lab with tested metrics | Planned |
+| 2. Markets, Research, Risk Lab | 1, 2 | Provider adapters, curated universe, daily refresh job, Markets dashboard, search, asset pages, technicals, fundamentals (where reliable), Risk Lab with tested metrics | Done |
 | 3. Portfolio and intelligence | 3, 4 | Auth, ledger, P&L, allocation, RLS tests per table, AI assistant with tools, sentiment/anomaly/forecast jobs, Monte Carlo, alerts, reports | Planned |
 | 4. Polish and launch | 5 | Design verification (screenshots, contrast, Lighthouse ≥ 90), accessibility, monitoring, complete docs, final smoke tests | Planned |
 
@@ -21,6 +21,16 @@ after every step.
 - [x] Free-tier limits verified and recorded (`docs/HOSTING.md`)
 - [x] Web app live on Vercel, API live on Render, database on Supabase
 - [x] Live API health check reports the database as connected
+
+## Step 2 acceptance
+- [x] Analytics library (returns, risk, technicals, Monte Carlo, stress) tested against hand-calculated values
+- [x] 56-instrument universe with canonical IDs; Yahoo and CoinGecko adapters with quality flags
+- [x] Twice-daily refresh job; 5-year backfill loaded (74,486 bars, no failures)
+- [x] Market, instrument, risk and fundamentals API with seeded-database tests
+- [x] Markets dashboard, ⌘K search, Research, asset pages, Risk Lab
+- [x] Colour-vision validated chart palette; every chart has a table view
+- [x] US fundamentals from SEC (switched on once `SEC_CONTACT_EMAIL` is set)
+- [x] `docs/DATA_SOURCES.md` and `docs/METHODOLOGY.md`
 
 ## Key decisions
 - **Canonical instrument IDs** are readable strings (`eq:us:AAPL`,

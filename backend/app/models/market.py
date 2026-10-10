@@ -1,6 +1,6 @@
 """Reference and market data. Written only by batch jobs; readable by everyone."""
 
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal
 from typing import Any
 
@@ -8,6 +8,7 @@ from sqlalchemy import (
     BigInteger,
     Boolean,
     CheckConstraint,
+    Date,
     DateTime,
     ForeignKey,
     Index,
@@ -131,6 +132,33 @@ class InstrumentSnapshot(Base):
     total_supply: Mapped[Decimal | None] = mapped_column(Numeric(28, 4))
     max_supply: Mapped[Decimal | None] = mapped_column(Numeric(28, 4))
     volume_24h: Mapped[Decimal | None] = mapped_column(Numeric(28, 2))
+
+
+class Fundamental(Base):
+    """Annual company financials from SEC EDGAR company facts (US stocks only).
+
+    One row per instrument, concept and fiscal-year end. Restated values
+    overwrite earlier ones (the most recently filed value wins).
+    """
+
+    __tablename__ = "fundamentals"
+    __table_args__ = (
+        UniqueConstraint("instrument_id", "concept", "period_end", name="uq_fundamentals_key"),
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    instrument_id: Mapped[str] = mapped_column(ForeignKey("instruments.id", ondelete="CASCADE"))
+    concept: Mapped[str] = mapped_column(String(32))
+    fiscal_year: Mapped[int] = mapped_column()
+    period_start: Mapped[date | None] = mapped_column(Date)
+    period_end: Mapped[date] = mapped_column(Date)
+    value: Mapped[Decimal] = mapped_column(Numeric(28, 4))
+    unit: Mapped[str] = mapped_column(String(16))
+    source_tag: Mapped[str] = mapped_column(String(128))
+    form: Mapped[str] = mapped_column(String(16))
+    filed: Mapped[date] = mapped_column(Date)
+    accession: Mapped[str | None] = mapped_column(String(32))
+    retrieved_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
 
 class JobRun(Base):

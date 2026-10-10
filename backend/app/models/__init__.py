@@ -1,4 +1,5 @@
 from app.models.market import (
+    Fundamental,
     Instrument,
     InstrumentAlias,
     InstrumentSnapshot,
@@ -8,6 +9,7 @@ from app.models.market import (
 from app.models.user import Profile
 
 __all__ = [
+    "Fundamental",
     "Instrument",
     "InstrumentAlias",
     "InstrumentSnapshot",
