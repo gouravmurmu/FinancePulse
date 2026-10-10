@@ -37,7 +37,7 @@ class Settings(BaseSettings):
     # key the assistant explains that AI is not configured; nothing else changes.
     llm_api_key: str | None = None
     llm_base_url: str = "https://api.groq.com/openai/v1"
-    llm_model: str = "llama-3.3-70b-versatile"
+    llm_model: str = "openai/gpt-oss-120b"
     # Budgets that keep usage inside the provider's free quota.
     ai_requests_per_user_day: int = 25
     ai_tokens_per_user_day: int = 40_000

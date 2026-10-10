@@ -50,8 +50,11 @@ class OpenAICompatible:
             "model": self.model,
             "messages": messages,
             "temperature": 0.2,
-            "max_tokens": 900,
+            "max_tokens": 1500,
         }
+        if self.model.startswith("openai/gpt-oss"):
+            # Reasoning tokens count against max_tokens; keep them short.
+            body["reasoning_effort"] = "low"
         if tools:
             body["tools"] = tools
             body["tool_choice"] = "auto"
@@ -67,7 +70,7 @@ class OpenAICompatible:
         if res.status_code == 429:
             raise LLMError("AI provider rate limit reached", quota=True)
         if res.status_code >= 400:
-            raise LLMError(f"AI provider error {res.status_code}")
+            raise LLMError(f"AI provider error {res.status_code}: {res.text[:200]}")
         data = res.json()
         msg = data["choices"][0]["message"]
         calls = []

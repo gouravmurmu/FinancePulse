@@ -42,7 +42,7 @@ Resend's free tier) before inviting many users.
 - `LLM_API_KEY` (optional): a free Groq API key (console.groq.com) for the AI
   assistant. Without it the assistant says it is not switched on. `LLM_BASE_URL`
   and `LLM_MODEL` default to Groq's OpenAI-compatible endpoint and
-  `llama-3.3-70b-versatile`; any OpenAI-compatible provider works.
+  `openai/gpt-oss-120b`; any OpenAI-compatible provider works.
   Limits: `AI_REQUESTS_PER_USER_DAY` (25), `AI_TOKENS_PER_USER_DAY` (40000),
   `AI_TOKENS_PER_DAY` (300000, shared, kept under Groq's free daily quota).
 
