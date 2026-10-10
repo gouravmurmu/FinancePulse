@@ -17,6 +17,7 @@ YAHOO_SYMBOLS = ["AAPL", "^NSEI", "BTC-USD", "GC=F", "USDINR=X", "RELIANCE.NS"]
 COINGECKO_IDS = ["bitcoin", "ethereum", "solana"]
 SEC_CIK = "0000320193"  # Apple
 
+
 def sec_headers() -> dict[str, str] | None:
     """SEC fair-access policy requires a User-Agent with a contact email."""
     contact = os.getenv("SEC_CONTACT_EMAIL", "").strip()
