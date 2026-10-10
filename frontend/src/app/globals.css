@@ -1,0 +1,138 @@
+@import "tailwindcss";
+
+/*
+ * MarketPulse design tokens. See docs/DESIGN_SYSTEM.md.
+ * Components must use these tokens (via Tailwind utilities such as
+ * `bg-surface` or `text-muted`), never hard-coded hex values.
+ */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root,
+.dark {
+  --bg: #0b1220;
+  --surface: #111a2b;
+  --surface-raised: #172238;
+  --border: rgba(148, 163, 184, 0.12);
+  --text: #e6eaf2;
+  --text-muted: #94a3b8;
+  --text-subtle: #64748b;
+  --accent: #2dd4bf;
+  --accent-2: #60a5fa;
+  --positive: #34d399;
+  --negative: #f87171;
+  --warning: #fbbf24;
+  --neutral: #a1a1aa;
+  --ambient-1: rgba(20, 184, 166, 0.05);
+  --ambient-2: rgba(59, 130, 246, 0.05);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+
+  /* Fixed categorical chart palette (same asset keeps the same color). */
+  --chart-1: #2dd4bf;
+  --chart-2: #60a5fa;
+  --chart-3: #a78bfa;
+  --chart-4: #f59e0b;
+  --chart-5: #f472b6;
+  --chart-6: #34d399;
+  --chart-7: #fb923c;
+  --chart-8: #94a3b8;
+  --gold: #e5b94e;
+  --silver: #c0c7d1;
+
+  color-scheme: dark;
+}
+
+.light {
+  --bg: #f6f8fb;
+  --surface: #ffffff;
+  --surface-raised: #f1f5f9;
+  --border: rgba(15, 23, 42, 0.08);
+  --text: #0f172a;
+  --text-muted: #475569;
+  --text-subtle: #64748b;
+  --accent: #0d9488;
+  --accent-2: #2563eb;
+  --positive: #059669;
+  --negative: #dc2626;
+  --warning: #d97706;
+  --neutral: #71717a;
+  --ambient-1: rgba(13, 148, 136, 0.05);
+  --ambient-2: rgba(37, 99, 235, 0.04);
+  --shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-border: var(--border);
+  --color-text: var(--text);
+  --color-muted: var(--text-muted);
+  --color-subtle: var(--text-subtle);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-positive: var(--positive);
+  --color-negative: var(--negative);
+  --color-warning: var(--warning);
+  --color-neutral: var(--neutral);
+  --color-gold: var(--gold);
+  --color-silver: var(--silver);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-base: 14px;
+  --text-md: 16px;
+  --text-lg: 20px;
+  --text-xl: 24px;
+  --text-2xl: 32px;
+
+  --radius-card: 14px;
+  --shadow-card: var(--shadow);
+}
+
+html {
+  background: var(--bg);
+}
+
+body {
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(60rem 30rem at 0% 0%, var(--ambient-1), transparent 70%),
+    radial-gradient(60rem 30rem at 100% 0%, var(--ambient-2), transparent 70%);
+  background-repeat: no-repeat;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Prices, percentages and tables align in columns. */
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

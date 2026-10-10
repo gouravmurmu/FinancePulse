@@ -1,0 +1,44 @@
+# MarketPulse plan
+
+Source spec: `MarketPulse_Final_Prompt.md` (project files). This plan groups the
+spec's six phases into four build steps. The deployed app must keep working
+after every step.
+
+## Steps
+
+| Step | Spec phases | Delivers | Status |
+|---|---|---|---|
+| 1. Foundation and first deploy | 0 | Repo layout, design tokens, app shell, FastAPI service, schema + RLS, CI, hosting verification, live web + API + DB | In progress |
+| 2. Markets, Research, Risk Lab | 1, 2 | Provider adapters, curated universe, daily refresh job, Markets dashboard, search, asset pages, technicals, fundamentals (where reliable), Risk Lab with tested metrics | Planned |
+| 3. Portfolio and intelligence | 3, 4 | Auth, ledger, P&L, allocation, RLS tests per table, AI assistant with tools, sentiment/anomaly/forecast jobs, Monte Carlo, alerts, reports | Planned |
+| 4. Polish and launch | 5 | Design verification (screenshots, contrast, Lighthouse ≥ 90), accessibility, monitoring, complete docs, final smoke tests | Planned |
+
+## Step 1 acceptance
+- [x] Next.js app shell with the six destinations, dark/light themes from tokens
+- [x] FastAPI service with health check, error envelope, structured logs, CORS
+- [x] Alembic migration with RLS; tests prove users cannot read or change each other's rows
+- [x] CI: lint, type-check and tests for web and API; API image build
+- [x] Free-tier limits verified and recorded (`docs/HOSTING.md`)
+- [ ] Web app live on Vercel, API live on Render, database on Supabase
+- [ ] Live health check green end to end
+
+## Key decisions
+- **Canonical instrument IDs** are readable strings (`eq:us:AAPL`,
+  `crypto:BTC`, `metal:XAU:comex-fut`), never provider symbols. Provider symbols
+  live in `instrument_aliases`.
+- **Daily bars only** by default to stay inside 500 MB (see `docs/HOSTING.md`).
+- **Migrations run on API boot**: Render's free tier has no pre-deploy hook,
+  and `alembic upgrade head` is idempotent.
+- **No Redis yet**: in-process TTL cache first; Upstash only if needed.
+- **The API owns all writes**; Supabase's public endpoints are read-only for
+  market data and owner-only for user data (RLS).
+
+## Risks
+| Risk | Mitigation |
+|---|---|
+| Render cold starts (~1 min) | Waking state in UI, retries with backoff, serve stored data |
+| Render bandwidth (reported 5 GB/month on Hobby workspaces) | Compact JSON, client caching, no large payloads from the API |
+| Supabase pauses after 7 idle days | Daily refresh job writes to the DB |
+| yfinance is unofficial and may break | Provider adapter interface, recorded fixtures in tests, honest "unavailable" states |
+| Vercel Hobby is non-commercial only | Documented; Cloudflare Pages fallback |
+| Free LLM quotas | Per-user budget, app fully usable without AI |

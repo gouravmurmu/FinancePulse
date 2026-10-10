@@ -1,0 +1,3 @@
+# Batch-job dependencies (GitHub Actions runners). Heavy ML libraries
+# (pandas, scikit-learn, transformers) are added here as jobs arrive.
+-r api.txt

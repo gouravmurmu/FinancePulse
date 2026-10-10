@@ -1,0 +1,44 @@
+# Local development stack: Postgres (with a Supabase auth stub), API and web.
+#   docker compose up --build
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: marketpulse
+    ports: ["5432:5432"]
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./infra/postgres:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 2s
+      retries: 20
+
+  api:
+    build: ./backend
+    environment:
+      ENVIRONMENT: development
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/marketpulse
+      CORS_ORIGINS: http://localhost:3000
+    ports: ["8000:8000"]
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    image: node:22-alpine
+    working_dir: /app
+    command: sh -c "npm ci && npm run dev -- --hostname 0.0.0.0"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    ports: ["3000:3000"]
+    volumes:
+      - ./frontend:/app
+      - web-node-modules:/app/node_modules
+    depends_on: [api]
+
+volumes:
+  db-data:
+  web-node-modules:
