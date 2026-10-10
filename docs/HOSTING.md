@@ -32,6 +32,10 @@ Re-check before relying on a number, and update this file when anything moves.
   one minute**. The frontend shows "Waking up the analytics server…" meanwhile.
 - **750 free instance hours per workspace per month.** One always-awake service
   would use ~744 h, so keep only one free web service in the workspace.
+  **Note (10 Oct 2026):** this workspace also has `gci-backend` (WorldRisk
+  project). Both draw from the same 750 hours; since free services sleep when
+  idle this is fine at low traffic, but if both are busy all month the pool
+  can run out and both are suspended until the next month.
 - Outbound bandwidth and build minutes count against the workspace allowance.
   Render's page does not state the amount. A secondary review
   ([jwatte.com](https://jwatte.com/blog/render-com-platform-review.md)) reports
