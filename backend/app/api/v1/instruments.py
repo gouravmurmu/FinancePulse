@@ -15,7 +15,7 @@ from app.schemas.market import (
     Snapshot,
 )
 from app.services import analytics_service as svc
-from app.services import forecast_service, fundamentals_service
+from app.services import forecast_service, fundamentals_service, news_service
 from app.services import market_data as md
 
 router = APIRouter(prefix="/instruments", tags=["instruments"])
@@ -133,3 +133,13 @@ def instrument_fundamentals(session: DbSession, instrument_id: str) -> Fundament
 def instrument_forecast(session: DbSession, instrument_id: str) -> dict[str, Any]:
     inst = md.get_instrument(session, instrument_id)
     return forecast_service.latest(session, inst)
+
+
+@router.get("/{instrument_id}/news", summary="Recent headlines with FinBERT sentiment")
+def instrument_news(
+    session: DbSession,
+    instrument_id: str,
+    limit: Annotated[int, Query(ge=1, le=50)] = 20,
+) -> dict[str, Any]:
+    inst = md.get_instrument(session, instrument_id)
+    return news_service.instrument_news(session, inst, limit)

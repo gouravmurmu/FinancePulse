@@ -73,7 +73,10 @@ kind, written by `jobs/scan_alerts.py` after each market data refresh.
 `forecast_runs` (public read) holds daily baseline forecasts and their
 walk-forward scores, written by `jobs/run_forecasts.py` (see docs/MODELS.md).
 
-Later parts add news and sentiment and reports. Every user-owned table gets owner-only
+`news_articles` and `news_instruments` (public read) hold headlines, their
+FinBERT scores and which instruments they mention.
+
+Later parts add saved reports. Every user-owned table gets owner-only
 RLS policies and an isolation test.
 
 ## Provider interface (step 2)

@@ -27,6 +27,7 @@ import { seriesColor } from "@/lib/series";
 import { AnomaliesCard } from "./anomalies-card";
 import { ForecastCard } from "./forecast-card";
 import { FundamentalsPanel } from "./fundamentals";
+import { NewsCard } from "./news-card";
 import { RiskPanel } from "./risk-panel";
 
 const OVERLAYS = [
@@ -78,6 +79,7 @@ export function AssetView({ id }: { id: string }) {
               <div className="flex flex-col gap-6">
                 <RiskPanel id={id} period={period} />
                 <ForecastCard id={id} assetClass={d.instrument.asset_class} />
+                <NewsCard id={id} />
                 {d.instrument.asset_class === "equity" ? <FundamentalsPanel id={id} /> : null}
               </div>
             </div>

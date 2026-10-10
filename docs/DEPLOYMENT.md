@@ -45,11 +45,16 @@ Resend's free tier) before inviting many users.
 - `SEC_CONTACT_EMAIL`: contact email SEC requires in the User-Agent. Without it the
   weekly fundamentals job is skipped with a warning.
 - `COINGECKO_API_KEY` (optional): free CoinGecko Demo key for a higher rate limit.
+- `FINNHUB_API_KEY` (optional): free key from finnhub.io for headlines. Without it
+  the news job does nothing and asset pages say news is not switched on.
 
 ## Scheduled jobs
 | Workflow | Schedule (UTC) | Manual run |
 |---|---|---|
 | `market-data.yml` | 11:00 and 22:30 daily | `backfill` (5 years) and `only` (instrument IDs) inputs |
+| `market-data.yml` (second step) | after each refresh | anomaly scan and alert evaluation |
+| `forecasts.yml` | 23:15 daily | `only` input |
+| `news.yml` | 10:45 and 22:15 daily | yes; headlines, then FinBERT sentiment |
 | `fundamentals.yml` | Sundays 06:00 | yes |
 | `record-fixtures.yml` | manual only | pushes real provider samples to `fixtures/recorded` |
 

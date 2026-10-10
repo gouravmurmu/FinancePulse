@@ -1,0 +1,4 @@
+# FinBERT sentiment job only (GitHub Actions). Install CPU-only torch first:
+#   pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu
+-r jobs.txt
+transformers==5.19.0

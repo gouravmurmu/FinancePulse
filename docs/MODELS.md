@@ -59,6 +59,20 @@ horizon, as-of date, model version).
 them only if the baselines are in place and a model can beat them under the same
 walk-forward test.
 
+## Headline sentiment (FinBERT)
+Code: `backend/jobs/score_sentiment.py`, run after each news fetch in `news.yml`.
+
+- Model: `ProsusAI/finbert` (BERT fine-tuned on financial news), run on CPU with
+  Hugging Face Transformers. Input is the headline only.
+- Output per headline: positive, neutral or negative, the probability of each,
+  the model name and the time it was scored.
+- Daily "net tone" on asset pages is the average of P(positive) − P(negative)
+  over that day's headlines, shown next to the closing price for exploration.
+  The app makes no claim that tone causes or predicts price moves.
+- Known limits: headlines are short and often ambiguous; the model was trained
+  on English financial news and can misread sarcasm, mixed news or headlines
+  about several companies. Coverage is only what Finnhub's free tier returns.
+
 ## Anomalies
 See `docs/METHODOLOGY.md#anomalies`. They are statistical flags, not models of
 future prices.

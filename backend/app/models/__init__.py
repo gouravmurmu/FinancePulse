@@ -8,6 +8,7 @@ from app.models.market import (
     JobRun,
     MarketObservation,
 )
+from app.models.news import NewsArticle, NewsInstrument
 from app.models.portfolio import Portfolio, Transaction, Watchlist, WatchlistItem
 from app.models.user import Profile
 
@@ -16,6 +17,8 @@ __all__ = [
     "AlertRule",
     "AnomalyFlag",
     "ForecastRun",
+    "NewsArticle",
+    "NewsInstrument",
     "Fundamental",
     "Instrument",
     "InstrumentAlias",

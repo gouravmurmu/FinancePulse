@@ -34,7 +34,10 @@ tiers.
   on past data; when none beats "no change", the page says so
   ([docs/MODELS.md](docs/MODELS.md)).
 
-Not built yet: AI assistant and news (rest of step 3). Those
+- **News** with source links and FinBERT headline tone for US stocks, ETFs
+  and major coins (needs a free Finnhub key).
+
+Not built yet: AI assistant and reports (rest of step 3). Those
 sections say so in the app. See [PLAN.md](PLAN.md).
 
 ## Stack

@@ -46,7 +46,8 @@ Each part ships on its own.
 - **3c News, sentiment, forecasts**: forecast baselines (no change, drift,
   damped-trend smoothing) with walk-forward evaluation and a significance test
   against no change, shown on asset pages (`docs/MODELS.md`) (done). Headlines
-  with attribution and a FinBERT batch job need a Finnhub key.
+  with attribution and FinBERT sentiment (done; switched on once
+  `FINNHUB_API_KEY` is set).
 - **3d AI assistant and reports**: Groq behind a provider interface, tools that
   call backend functions, per-user budget; PDF and CSV reports.
 

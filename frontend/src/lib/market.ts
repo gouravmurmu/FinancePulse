@@ -336,6 +336,38 @@ export const ForecastSchema = z.object({
 });
 export type Forecast = z.infer<typeof ForecastSchema>;
 
+const NewsArticleSchema = z.object({
+  id: z.number(),
+  published_at: z.string(),
+  source: z.string(),
+  headline: z.string(),
+  summary: z.string().nullable(),
+  url: z.string(),
+  provider: z.string(),
+  sentiment: z
+    .object({
+      label: z.enum(["positive", "neutral", "negative"]),
+      score: z.number().nullable(),
+      probs: z.record(z.string(), z.number()).nullable(),
+      model: z.string().nullable(),
+    })
+    .nullable(),
+});
+export type NewsArticle = z.infer<typeof NewsArticleSchema>;
+
+export const NewsSchema = z.object({
+  instrument_id: z.string(),
+  configured: z.boolean(),
+  coverage_note: z.string().nullable(),
+  articles: z.array(NewsArticleSchema),
+  trend: z.object({
+    days: z.number(),
+    points: z.array(z.object({ date: z.string(), headlines: z.number(), tone: z.number() })),
+    close: z.array(PointSchema),
+  }),
+});
+export type News = z.infer<typeof NewsSchema>;
+
 const enc = encodeURIComponent;
 
 /** Market data and analytics endpoints can be slow while Render wakes up. */
@@ -385,6 +417,7 @@ export const marketApi = {
     shocks?: Record<string, number>;
   }) => apiPost(`/api/v1/risk/stress`, body, StressSchema, SLOW),
   stressPresets: () => apiGet(`/api/v1/risk/stress-presets`, StressPresetsSchema),
+  news: (id: string) => apiGet(`/api/v1/instruments/${enc(id)}/news`, NewsSchema, SLOW),
   forecast: (id: string) => apiGet(`/api/v1/instruments/${enc(id)}/forecast`, ForecastSchema, SLOW),
 };
 

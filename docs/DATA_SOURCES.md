@@ -10,6 +10,7 @@ simulated or filled in. When a source fails, the affected numbers show as
 | Crypto market cap, supply, 24h volume | CoinGecko public API | Free; optional Demo key (`COINGECKO_API_KEY`) | With each price refresh | Snapshot only; history comes from Yahoo. |
 | US company financials | SEC EDGAR company facts (XBRL) | Free, official; needs a contact email in the User-Agent (`SEC_CONTACT_EMAIL`) | Weekly (Sunday 06:00 UTC) | Annual 10-K figures only. |
 | Indian company financials | None | | | No free, reliable source. Pages say "Fundamentals not available". |
+| Headlines (US stocks and ETFs; crypto feed matched by coin name or ticker) | Finnhub free tier | Free key (`FINNHUB_API_KEY`) | 10:45 and 22:15 UTC daily | Headline, source, link, time and short summary only; no article text. No Indian or index news on the free tier. |
 
 ## Universe
 56 curated instruments (`backend/app/data/universe.py`): 8 global and 4 Indian
