@@ -57,7 +57,8 @@ export function PriceChart({
         textColor: text,
         fontFamily: getComputedStyle(document.body).fontFamily,
         fontSize: 12,
-        attributionLogo: true,
+        // Attribution is the visible "Charts by TradingView" link under the chart.
+        attributionLogo: false,
       },
       grid: { vertLines: { visible: false }, horzLines: { color: grid } },
       rightPriceScale: { borderVisible: false },
@@ -126,7 +127,9 @@ export function PriceChart({
 
   return (
     <figure>
-      <div ref={ref} style={{ height }} role="img" aria-label={caption} />
+      {/* The canvas library builds layout tables; the table view below is the accessible version. */}
+      <p className="sr-only">{caption}</p>
+      <div ref={ref} style={{ height }} aria-hidden="true" />
       <figcaption className="mt-1 text-xs text-subtle">
         Charts by{" "}
         <a

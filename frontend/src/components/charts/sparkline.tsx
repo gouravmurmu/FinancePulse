@@ -1,4 +1,5 @@
-/** Tiny trend line beside a number. Decorative: the number carries the value. */
+/** Tiny trend line beside a number. Decorative: the number (with its arrow and
+ * colour) carries the value. */
 export function Sparkline({
   values,
   className,
@@ -21,7 +22,6 @@ export function Sparkline({
         `${i ? "L" : "M"}${(i * step).toFixed(1)},${(height - 2 - ((v - min) / span) * (height - 4)).toFixed(1)}`,
     )
     .join("");
-  const up = values[values.length - 1] >= values[0];
   return (
     <svg
       aria-hidden="true"
@@ -33,7 +33,9 @@ export function Sparkline({
       <path
         d={d}
         fill="none"
-        stroke={up ? "var(--positive)" : "var(--negative)"}
+        // Neutral on purpose: on the 1D view the line spans several days, so a
+        // green/red line could contradict the day's change shown beside it.
+        stroke="var(--text-muted)"
         strokeWidth={1.5}
         strokeLinejoin="round"
         strokeLinecap="round"

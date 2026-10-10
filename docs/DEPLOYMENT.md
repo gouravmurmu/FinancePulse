@@ -62,6 +62,7 @@ Resend's free tier) before inviting many users.
 | `forecasts.yml` | 23:15 daily | `only` input |
 | `news.yml` | 10:45 and 22:15 daily | yes; headlines, then FinBERT sentiment |
 | `fundamentals.yml` | Sundays 06:00 | yes |
+| `smoke.yml` | 12:30 daily | read-only checks of the live site and job freshness |
 | `record-fixtures.yml` | manual only | pushes real provider samples to `fixtures/recorded` |
 
 Secrets live only in the provider dashboards, never in the repository.

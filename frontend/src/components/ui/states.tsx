@@ -12,7 +12,7 @@ export function SkeletonBlock({ className }: { className?: string }) {
 
 export function SkeletonCard({ lines = 3, className }: { lines?: number; className?: string }) {
   return (
-    <Card className={className} aria-busy="true" aria-label="Loading">
+    <Card className={className} role="status" aria-busy="true" aria-label="Loading">
       <SkeletonBlock className="mb-3 h-4 w-1/3" />
       {Array.from({ length: lines }, (_, i) => (
         <SkeletonBlock key={i} className="mb-2 h-3 w-full last:w-2/3" />

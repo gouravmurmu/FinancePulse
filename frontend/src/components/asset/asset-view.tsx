@@ -7,6 +7,7 @@ import { LineChart } from "@/components/charts/line-chart";
 import { PriceChart, type Overlay } from "@/components/charts/price-chart";
 import { TableView } from "@/components/charts/table-view";
 import { Card, CardHeader } from "@/components/ui/card";
+import { Deferred } from "@/components/ui/deferred";
 import { Change } from "@/components/ui/change";
 import { FreshnessChip } from "@/components/ui/freshness-chip";
 import { WatchButton } from "@/components/watchlist/watch-button";
@@ -26,6 +27,7 @@ import {
   type Period,
 } from "@/lib/market";
 import { seriesColor } from "@/lib/series";
+import { useIsPro } from "@/lib/view-mode";
 import { AnomaliesCard } from "./anomalies-card";
 import { ForecastCard } from "./forecast-card";
 import { FundamentalsPanel } from "./fundamentals";
@@ -79,15 +81,27 @@ export function AssetView({ id }: { id: string }) {
           <div className="grid gap-6 xl:grid-cols-12 [&>*]:min-w-0">
             <div className="xl:col-span-8">
               <div className="flex flex-col gap-6">
-                <RiskPanel id={id} period={period} />
-                <ForecastCard id={id} assetClass={d.instrument.asset_class} />
-                <NewsCard id={id} />
-                {d.instrument.asset_class === "equity" ? <FundamentalsPanel id={id} /> : null}
+                <Deferred>
+                  <RiskPanel id={id} period={period} />
+                </Deferred>
+                <Deferred>
+                  <ForecastCard id={id} assetClass={d.instrument.asset_class} />
+                </Deferred>
+                <Deferred>
+                  <NewsCard id={id} />
+                </Deferred>
+                {d.instrument.asset_class === "equity" ? (
+                  <Deferred>
+                    <FundamentalsPanel id={id} />
+                  </Deferred>
+                ) : null}
               </div>
             </div>
             <div className="flex flex-col gap-6 xl:col-span-4">
               <AboutCard d={d} />
-              <AnomaliesCard id={id} />
+              <Deferred lines={3} minHeight={160}>
+                <AnomaliesCard id={id} />
+              </Deferred>
               {d.snapshot ? <CryptoCard d={d} /> : null}
               {d.metal_context ? <MetalCard d={d} /> : null}
               <RelatedCard d={d} />
@@ -165,7 +179,9 @@ function PricePanel({
 }) {
   const [mode, setMode] = useState<"line" | "candle">("line");
   const [volume, setVolume] = useState(true);
-  const [overlays, setOverlays] = useState<OverlayKey[]>([]);
+  const [chosen, setOverlays] = useState<OverlayKey[]>([]);
+  const pro = useIsPro();
+  const overlays = useMemo(() => (pro ? chosen : []), [pro, chosen]);
   const history = useQuery({
     queryKey: ["history", id, period, currency],
     queryFn: () => marketApi.history(id, period, currency),
@@ -200,6 +216,7 @@ function PricePanel({
 
   return (
     <Card>
+      <h2 className="sr-only">Price chart and indicators</h2>
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <Segmented
           label="Chart type"
@@ -219,8 +236,8 @@ function PricePanel({
           />
           Volume
         </label>
-        <span className="mx-1 h-4 w-px bg-border" aria-hidden="true" />
-        {OVERLAYS.map((o) => (
+        {pro ? <span className="mx-1 h-4 w-px bg-border" aria-hidden="true" /> : null}
+        {(pro ? OVERLAYS : []).map((o) => (
           <label key={o.key} className="inline-flex items-center gap-1.5 text-sm text-muted">
             <input
               type="checkbox"
@@ -236,8 +253,13 @@ function PricePanel({
             {o.label}
           </label>
         ))}
-        {converted ? (
+        {pro && converted ? (
           <span className="text-xs text-subtle">Indicators use the original currency.</span>
+        ) : null}
+        {!pro ? (
+          <span className="text-xs text-subtle">
+            Pro view adds moving averages, Bollinger bands, RSI and MACD.
+          </span>
         ) : null}
       </div>
       <QueryState query={history} skeletonLines={8}>
@@ -274,40 +296,42 @@ function PricePanel({
           )
         }
       </QueryState>
-      {ind?.rsi_14?.length ? (
-        <div className="mt-6 grid gap-6 lg:grid-cols-2">
-          <div>
-            <h3 className="label mb-2">RSI (14)</h3>
-            <LineChart
-              caption="Relative strength index, 14 days"
-              height={150}
-              domain={[0, 100]}
-              format={(v) => formatNumber(v, 0)}
-              series={[{ id: "rsi", label: "RSI", color: seriesColor(0), points: ind.rsi_14 }]}
-            />
-            <p className="mt-1 text-xs text-subtle">
-              Above 70 is often read as overbought, below 30 as oversold.
-            </p>
+      {pro && ind?.rsi_14?.length ? (
+        <Deferred lines={3} minHeight={200}>
+          <div className="mt-6 grid gap-6 lg:grid-cols-2">
+            <div>
+              <h3 className="label mb-2">RSI (14)</h3>
+              <LineChart
+                caption="Relative strength index, 14 days"
+                height={150}
+                domain={[0, 100]}
+                format={(v) => formatNumber(v, 0)}
+                series={[{ id: "rsi", label: "RSI", color: seriesColor(0), points: ind.rsi_14 }]}
+              />
+              <p className="mt-1 text-xs text-subtle">
+                Above 70 is often read as overbought, below 30 as oversold.
+              </p>
+            </div>
+            <div>
+              <h3 className="label mb-2">MACD (12, 26, 9)</h3>
+              <LineChart
+                caption="MACD and signal line"
+                height={150}
+                baseline={0}
+                format={(v) => formatNumber(v, 2)}
+                series={[
+                  { id: "macd", label: "MACD", color: seriesColor(0), points: ind.macd ?? [] },
+                  {
+                    id: "signal",
+                    label: "Signal",
+                    color: seriesColor(1),
+                    points: ind.macd_signal ?? [],
+                  },
+                ]}
+              />
+            </div>
           </div>
-          <div>
-            <h3 className="label mb-2">MACD (12, 26, 9)</h3>
-            <LineChart
-              caption="MACD and signal line"
-              height={150}
-              baseline={0}
-              format={(v) => formatNumber(v, 2)}
-              series={[
-                { id: "macd", label: "MACD", color: seriesColor(0), points: ind.macd ?? [] },
-                {
-                  id: "signal",
-                  label: "Signal",
-                  color: seriesColor(1),
-                  points: ind.macd_signal ?? [],
-                },
-              ]}
-            />
-          </div>
-        </div>
+        </Deferred>
       ) : null}
     </Card>
   );

@@ -11,7 +11,7 @@ after every step.
 | 1. Foundation and first deploy | 0 | Repo layout, design tokens, app shell, FastAPI service, schema + RLS, CI, hosting verification, live web + API + DB | Done |
 | 2. Markets, Research, Risk Lab | 1, 2 | Provider adapters, curated universe, daily refresh job, Markets dashboard, search, asset pages, technicals, fundamentals (where reliable), Risk Lab with tested metrics | Done |
 | 3. Portfolio and intelligence | 3, 4 | Auth, ledger, P&L, allocation, RLS tests per table, AI assistant with tools, sentiment/anomaly/forecast jobs, Monte Carlo, alerts, reports | Done |
-| 4. Polish and launch | 5 | Design verification (screenshots, contrast, Lighthouse ≥ 90), accessibility, monitoring, complete docs, final smoke tests | Planned |
+| 4. Polish and launch | 5 | Design verification (screenshots, contrast, Lighthouse ≥ 90), accessibility, monitoring, complete docs, final smoke tests | Done |
 
 ## Step 1 acceptance
 - [x] Next.js app shell with the six destinations, dark/light themes from tokens
@@ -54,6 +54,18 @@ Each part ships on its own.
   context, per-user and shared daily budgets (done; switched on once
   `LLM_API_KEY` is set). PDF and CSV reports for assets and portfolios,
   generated on demand with sources and methodology (done).
+
+## Step 4 results (10 Oct 2026)
+- Lighthouse on a local production build (8 main pages): accessibility 100
+  and best practices 100 everywhere. Performance 59 to 95 under mobile
+  throttling; the asset page is heaviest (two chart libraries), so its
+  lower cards render as they scroll into view.
+- Contrast: every text token now meets 4.5:1 in both themes
+  (`docs/DESIGN_SYSTEM.md` lists the five spec colours that were adjusted).
+- Screenshots of every page, both themes, desktop and mobile:
+  `docs/screenshots/` (synthetic demo prices).
+- Playwright end-to-end tests run in CI; a daily smoke test checks the live
+  site and the scheduled jobs.
 
 ## Key decisions
 - **Canonical instrument IDs** are readable strings (`eq:us:AAPL`,

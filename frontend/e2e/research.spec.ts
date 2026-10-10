@@ -12,7 +12,15 @@ test("search finds an asset and opens its page", async ({ page }) => {
   await expect(page).toHaveURL(/\/assets\/eq(%3A|:)us(%3A|:)AAPL/);
   await expect(page.getByRole("heading", { level: 1, name: "Apple Inc." })).toBeVisible();
   await expect(page.getByText(/End of day/).first()).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Risk", exact: true })).toBeVisible();
+  const risk = page.getByRole("heading", { name: "Risk", exact: true });
+  await page.mouse.wheel(0, 1500);
+  await expect(risk).toBeVisible();
+
+  // Pro view adds technical indicators.
+  await expect(page.getByRole("heading", { name: "RSI (14)" })).toHaveCount(0);
+  await page.getByRole("radio", { name: "Pro" }).click();
+  await page.mouse.wheel(0, -3000);
+  await expect(page.getByRole("checkbox", { name: "SMA 50" })).toBeVisible();
 });
 
 test("Risk Lab compares the default assets and runs a simulation", async ({ page }) => {

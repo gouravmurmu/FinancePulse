@@ -33,6 +33,7 @@ test("an asset page loads its chart and risk panel", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1, name: "Apple Inc." })).toBeVisible({
     timeout: 150_000,
   });
+  await page.mouse.wheel(0, 1500);
   await expect(page.getByRole("heading", { name: "Risk", exact: true })).toBeVisible({
     timeout: 150_000,
   });

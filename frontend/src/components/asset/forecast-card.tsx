@@ -9,6 +9,7 @@ import { QueryState } from "@/components/ui/query-state";
 import { Segmented } from "@/components/ui/segmented";
 import { formatDate, formatPercent, formatPrice } from "@/lib/format";
 import { marketApi, type ForecastHorizon } from "@/lib/market";
+import { useIsPro } from "@/lib/view-mode";
 
 const HORIZON_LABEL: Record<number, string> = { 5: "1 week", 20: "1 month" };
 const HORIZON_PHRASE: Record<number, string> = { 5: "one-week", 20: "one-month" };
@@ -19,6 +20,7 @@ const pct0 = (v: number) => `${Math.round(v * 100)}%`;
 export function ForecastCard({ id, assetClass }: { id: string; assetClass: string }) {
   const q = useQuery({ queryKey: ["forecast", id], queryFn: () => marketApi.forecast(id) });
   const [h, setH] = useState<string>("20");
+  const pro = useIsPro();
   return (
     <Card>
       <CardHeader
@@ -64,7 +66,7 @@ export function ForecastCard({ id, assetClass }: { id: string; assetClass: strin
               ) : null}
               <Verdict run={run} currency={d.currency} assetClass={assetClass} />
               <RangeBar run={run} currency={d.currency} assetClass={assetClass} />
-              <ModelTable run={run} />
+              {pro ? <ModelTable run={run} /> : null}
               <p className="text-xs text-subtle">
                 Trained on closes from {formatDate(run.train_start)}. Tested on{" "}
                 {run.models[0]?.n ?? 0} windows between {formatDate(run.eval_start)} and{" "}

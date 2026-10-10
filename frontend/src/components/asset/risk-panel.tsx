@@ -1,5 +1,6 @@
 "use client";
 
+import { useIsPro } from "@/lib/view-mode";
 import { useQuery } from "@tanstack/react-query";
 import { Info, TriangleAlert } from "lucide-react";
 import { LineChart } from "@/components/charts/line-chart";
@@ -45,6 +46,7 @@ const pctU = (v: number | null) => (v === null ? "—" : formatPercent(v, { sign
 const num = (v: number | null) => (v === null ? "—" : formatNumber(v));
 
 export function RiskPanel({ id, period }: { id: string; period: Period }) {
+  const pro = useIsPro();
   const riskPeriod: Period = period === "1D" || period === "1W" ? "1Y" : period;
   const query = useQuery({
     queryKey: ["risk", id, riskPeriod],
@@ -71,7 +73,7 @@ export function RiskPanel({ id, period }: { id: string; period: Period }) {
             <Stat label="CAGR" value={pct(r.metrics.cagr)} />
             <Stat label="Volatility" value={pctU(r.metrics.volatility)} hint="annualized" />
             <Stat label="Sharpe" value={num(r.metrics.sharpe)} hint="0% risk-free" />
-            <Stat label="Sortino" value={num(r.metrics.sortino)} />
+            {pro ? <Stat label="Sortino" value={num(r.metrics.sortino)} /> : null}
             <Stat
               label="Max drawdown"
               value={pct(r.metrics.max_drawdown)}
@@ -86,11 +88,13 @@ export function RiskPanel({ id, period }: { id: string; period: Period }) {
               value={pctU(r.metrics.var)}
               hint="1-day historical loss"
             />
-            <Stat
-              label="Exp. shortfall"
-              value={pctU(r.metrics.expected_shortfall)}
-              hint="avg loss beyond VaR"
-            />
+            {pro ? (
+              <Stat
+                label="Exp. shortfall"
+                value={pctU(r.metrics.expected_shortfall)}
+                hint="avg loss beyond VaR"
+              />
+            ) : null}
             {r.metrics.beta !== null ? (
               <Stat
                 label="Beta"
@@ -99,7 +103,7 @@ export function RiskPanel({ id, period }: { id: string; period: Period }) {
               />
             ) : null}
           </dl>
-          <div className="mt-5 grid gap-6 lg:grid-cols-2">
+          <div className={pro ? "mt-5 grid gap-6 lg:grid-cols-2" : "mt-5"}>
             <div>
               <h3 className="label mb-2">Drawdown from peak</h3>
               <LineChart
@@ -112,22 +116,24 @@ export function RiskPanel({ id, period }: { id: string; period: Period }) {
                 ]}
               />
             </div>
-            <div>
-              <h3 className="label mb-2">Rolling volatility</h3>
-              <LineChart
-                caption="Rolling annualized volatility"
-                height={180}
-                format={(v) => formatPercent(v, { signed: false })}
-                series={[
-                  {
-                    id: "vol",
-                    label: "Volatility",
-                    color: seriesColor(0),
-                    points: r.rolling_volatility,
-                  },
-                ]}
-              />
-            </div>
+            {pro ? (
+              <div>
+                <h3 className="label mb-2">Rolling volatility</h3>
+                <LineChart
+                  caption="Rolling annualized volatility"
+                  height={180}
+                  format={(v) => formatPercent(v, { signed: false })}
+                  series={[
+                    {
+                      id: "vol",
+                      label: "Volatility",
+                      color: seriesColor(0),
+                      points: r.rolling_volatility,
+                    },
+                  ]}
+                />
+              </div>
+            ) : null}
           </div>
           <details className="mt-4 text-sm text-muted">
             <summary className="inline-flex cursor-pointer items-center gap-1.5 hover:text-text">

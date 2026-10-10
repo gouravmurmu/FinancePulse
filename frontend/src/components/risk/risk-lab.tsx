@@ -16,6 +16,7 @@ import { marketApi, type Instrument, type Period, type RiskLab as RiskLabData } 
 import { assignSlots, seriesColor } from "@/lib/series";
 import { CorrelationMatrix } from "./correlation-matrix";
 import { InstrumentPicker } from "./instrument-picker";
+import { useIsPro } from "@/lib/view-mode";
 
 const DEFAULT = ["idx:us:SPX", "idx:in:NIFTY50", "crypto:BTC", "metal:XAU:comex-fut"];
 const DEFAULT_NAMES: Record<string, string> = {
@@ -125,6 +126,7 @@ function Analysis({
   );
   const pct = (v: number | null, signed = true) =>
     v === null ? "—" : formatPercent(v, { signed });
+  const pro = useIsPro();
   return (
     <div className="flex flex-col gap-6">
       <Card>
@@ -150,18 +152,22 @@ function Analysis({
                 <th scope="col" className="px-3 text-right font-medium">
                   Sharpe
                 </th>
-                <th scope="col" className="px-3 text-right font-medium">
-                  Sortino
-                </th>
+                {pro ? (
+                  <th scope="col" className="px-3 text-right font-medium">
+                    Sortino
+                  </th>
+                ) : null}
                 <th scope="col" className="px-3 text-right font-medium">
                   Max drawdown
                 </th>
                 <th scope="col" className="px-3 text-right font-medium">
                   VaR {Math.round(data.confidence * 100)}%
                 </th>
-                <th scope="col" className="px-3 text-right font-medium">
-                  Exp. shortfall
-                </th>
+                {pro ? (
+                  <th scope="col" className="px-3 text-right font-medium">
+                    Exp. shortfall
+                  </th>
+                ) : null}
                 <th scope="col" className="pl-3 font-medium">
                   Risk
                 </th>
@@ -185,12 +191,16 @@ function Analysis({
                   <td className="px-3 text-right">
                     {m.sharpe === null ? "—" : formatNumber(m.sharpe)}
                   </td>
-                  <td className="px-3 text-right">
-                    {m.sortino === null ? "—" : formatNumber(m.sortino)}
-                  </td>
+                  {pro ? (
+                    <td className="px-3 text-right">
+                      {m.sortino === null ? "—" : formatNumber(m.sortino)}
+                    </td>
+                  ) : null}
                   <td className="px-3 text-right">{pct(m.max_drawdown)}</td>
                   <td className="px-3 text-right">{pct(m.var, false)}</td>
-                  <td className="px-3 text-right">{pct(m.expected_shortfall, false)}</td>
+                  {pro ? (
+                    <td className="px-3 text-right">{pct(m.expected_shortfall, false)}</td>
+                  ) : null}
                   <td className="pl-3">
                     <RiskBadge level={m.risk_level} />
                   </td>
@@ -202,7 +212,7 @@ function Analysis({
         <Assumptions items={data.assumptions} />
       </Card>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className={pro ? "grid gap-6 lg:grid-cols-2" : "grid gap-6"}>
         <Card>
           <CardHeader title="Correlation" subtitle="How daily returns moved together" />
           <CorrelationMatrix
@@ -211,31 +221,33 @@ function Analysis({
             names={allNames}
           />
         </Card>
-        <Card>
-          <CardHeader
-            title="Rolling correlation"
-            subtitle={`${label(data.rolling_correlation.pair[0])} vs ${label(data.rolling_correlation.pair[1])}, ${data.window}-day window`}
-          />
-          {data.rolling_correlation.points.length ? (
-            <LineChart
-              caption="Rolling correlation of the first two instruments"
-              height={220}
-              baseline={0}
-              domain={[-1, 1]}
-              format={(v) => formatNumber(v)}
-              series={[
-                {
-                  id: "rc",
-                  label: "Correlation",
-                  color: seriesColor(0),
-                  points: data.rolling_correlation.points,
-                },
-              ]}
+        {pro ? (
+          <Card>
+            <CardHeader
+              title="Rolling correlation"
+              subtitle={`${label(data.rolling_correlation.pair[0])} vs ${label(data.rolling_correlation.pair[1])}, ${data.window}-day window`}
             />
-          ) : (
-            <p className="text-muted">Choose a longer period to see rolling correlation.</p>
-          )}
-        </Card>
+            {data.rolling_correlation.points.length ? (
+              <LineChart
+                caption="Rolling correlation of the first two instruments"
+                height={220}
+                baseline={0}
+                domain={[-1, 1]}
+                format={(v) => formatNumber(v)}
+                series={[
+                  {
+                    id: "rc",
+                    label: "Correlation",
+                    color: seriesColor(0),
+                    points: data.rolling_correlation.points,
+                  },
+                ]}
+              />
+            ) : (
+              <p className="text-muted">Choose a longer period to see rolling correlation.</p>
+            )}
+          </Card>
+        ) : null}
       </div>
 
       <Card>

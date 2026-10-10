@@ -11,6 +11,7 @@ import { AccountMenu } from "@/components/auth/account-menu";
 import { useAlertEvents } from "@/lib/alerts";
 import { ThemeToggle } from "./theme-toggle";
 import { AskAiButton } from "@/components/assistant/ask-ai-button";
+import { ViewToggle } from "./view-toggle";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -92,6 +93,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div className="flex flex-1 justify-center md:justify-start">
             <CommandSearch />
           </div>
+          <ViewToggle />
           <AskAiButton />
           <ThemeToggle />
           <AccountMenu />

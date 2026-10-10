@@ -16,7 +16,7 @@
   --border: rgba(148, 163, 184, 0.12);
   --text: #e6eaf2;
   --text-muted: #94a3b8;
-  --text-subtle: #64748b;
+  --text-subtle: #7d8ca3;
   --accent: #2dd4bf;
   --accent-2: #60a5fa;
   /* Text on accent fills: dark ink passes AA on both teals. */
@@ -41,11 +41,13 @@
   --chart-7: #9085e9;
   --chart-8: #e66767;
   --chart-grid: rgba(148, 163, 184, 0.12);
-  --chart-axis: #64748b;
+  --chart-axis: #7d8ca3;
   /* Diverging (correlation): blue <-> red, gray midpoint. */
-  --div-neg: #e66767;
+  --div-neg: #b05b58;
   --div-mid: #383835;
-  --div-pos: #3987e5;
+  /* Poles are toned so white labels keep 4.5:1 on every cell. */
+  --div-ink: #ffffff;
+  --div-pos: #3d6fad;
   --gold: #e5b94e;
   --silver: #c0c7d1;
 
@@ -59,12 +61,13 @@
   --border: rgba(15, 23, 42, 0.08);
   --text: #0f172a;
   --text-muted: #475569;
-  --text-subtle: #64748b;
-  --accent: #0d9488;
+  --text-subtle: #5b6b80;
+  --accent: #0f766e;
+  --accent-contrast: #ffffff;
   --accent-2: #2563eb;
-  --positive: #059669;
-  --negative: #dc2626;
-  --warning: #d97706;
+  --positive: #047857;
+  --negative: #b91c1c;
+  --warning: #b45309;
   --neutral: #71717a;
   --ambient-1: rgba(13, 148, 136, 0.05);
   --ambient-2: rgba(37, 99, 235, 0.04);
@@ -79,10 +82,11 @@
   --chart-7: #6250d6;
   --chart-8: #e34948;
   --chart-grid: rgba(15, 23, 42, 0.08);
-  --chart-axis: #64748b;
-  --div-neg: #e34948;
+  --chart-axis: #5b6b80;
+  --div-neg: #e96761;
   --div-mid: #f0efec;
-  --div-pos: #2a78d6;
+  --div-ink: #0f172a;
+  --div-pos: #4c8bdb;
 
   color-scheme: light;
 }

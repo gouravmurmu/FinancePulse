@@ -50,7 +50,7 @@ export function CorrelationMatrix({
                     className="h-10 min-w-14 rounded-md text-center font-medium"
                     style={{
                       background: divergingColor(v),
-                      color: Math.abs(v) > 0.6 ? "#fff" : "var(--text)",
+                      color: "var(--div-ink)",
                     }}
                     title={`${names[row]} vs ${names[col]}: ${formatNumber(v)}`}
                   >

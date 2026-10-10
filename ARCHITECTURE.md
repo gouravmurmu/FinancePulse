@@ -41,6 +41,11 @@ docs/                hosting, deployment, design system, later data sources and 
 ```
 
 ## API conventions
+Expensive endpoints (reports, Risk Lab analysis, Monte Carlo, CSV import, the
+assistant) have per-client limits per minute (`app/core/rate_limit.py`, in
+memory because the API is a single instance) and answer 429 `rate_limited`
+with `Retry-After`. `/api/v1/status` reports scheduled-job freshness.
+
 - Versioned under `/api/v1`; OpenAPI at `/docs` and `/openapi.json`.
 - Errors always use `{"error": {"code", "message", "details?"}}`.
 - Thin routes; logic in services (from step 2).

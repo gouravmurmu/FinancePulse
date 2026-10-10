@@ -6,9 +6,11 @@ Components never use raw hex values.
 
 ## Themes
 Dark is the default look; the app follows the OS setting and has a toggle.
-Token values match section 9.1 of the spec. Light-theme `--text-subtle`
-(`#64748B`) and `--neutral` (`#71717A`) were not specified and were chosen to
-meet 4.5:1 on white.
+Token values follow section 9.1 of the spec, except where a spec value fell
+below WCAG AA (4.5:1 for text) on the theme's backgrounds; those were darkened
+or lightened within the same hue (checked against `--bg`, `--surface` and
+`--surface-raised` during step 4). Light-theme `--neutral` (`#71717A`) was not
+specified.
 
 | Token | Dark | Light |
 |---|---|---|
@@ -17,15 +19,16 @@ meet 4.5:1 on white.
 | `--surface-raised` | `#172238` | `#F1F5F9` |
 | `--text` | `#E6EAF2` | `#0F172A` |
 | `--text-muted` | `#94A3B8` | `#475569` |
-| `--text-subtle` | `#64748B` | `#64748B` |
-| `--accent` | `#2DD4BF` | `#0D9488` |
+| `--text-subtle` | `#7D8CA3` (spec `#64748B`, 3.3:1) | `#5B6B80` (spec `#64748B`) |
+| `--accent` | `#2DD4BF` | `#0F766E` (spec `#0D9488`, 3.4:1) |
 | `--accent-2` | `#60A5FA` | `#2563EB` |
-| `--positive` | `#34D399` | `#059669` |
-| `--negative` | `#F87171` | `#DC2626` |
-| `--warning` | `#FBBF24` | `#D97706` |
+| `--positive` | `#34D399` | `#047857` (spec `#059669`, 3.4:1) |
+| `--negative` | `#F87171` | `#B91C1C` (spec `#DC2626`, 4.4:1) |
+| `--warning` | `#FBBF24` | `#B45309` (spec `#D97706`, 2.9:1) |
 
-`--text-subtle` on the dark background is below 4.5:1, so it is used only for
-captions, axis labels and the footer (large/secondary text), never body copy.
+Every text token now meets 4.5:1 on all three backgrounds in both themes.
+Buttons on the accent use `--accent-contrast` (dark ink in dark mode, white in
+light mode; both above 5:1).
 
 ## Chart palette
 Categorical slots in fixed order (the order is what keeps adjacent series
