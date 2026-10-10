@@ -119,10 +119,9 @@ function Verdict({
         </span>
       </p>
       <p className="mt-1 text-xs text-muted">
-        Its past errors were{" "}
-        {run.skill !== null ? pct0(run.skill) : "—"} smaller than the
-        no-change baseline. Ranges are wide because prices are hard to predict; treat this as one
-        input, not a prediction you can rely on.
+        Its past errors were {run.skill !== null ? pct0(run.skill) : "—"} smaller than the no-change
+        baseline. Ranges are wide because prices are hard to predict; treat this as one input, not a
+        prediction you can rely on.
       </p>
     </div>
   );
