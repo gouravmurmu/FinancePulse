@@ -10,7 +10,13 @@ target_metadata = Base.metadata
 
 # Foreign keys into Supabase-managed schemas (auth.users) are created in
 # migrations but cannot be declared on our metadata.
-EXTERNAL_FKS = {"fk_profiles_id_users"}
+EXTERNAL_FKS = {
+    "fk_profiles_id_users",
+    "fk_portfolios_user_id_users",
+    "fk_transactions_user_id_users",
+    "fk_watchlists_user_id_users",
+    "fk_watchlist_items_user_id_users",
+}
 
 
 def include_object(

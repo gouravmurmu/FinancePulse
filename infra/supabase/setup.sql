@@ -20,3 +20,17 @@ grant authenticated to marketpulse_api with inherit true;
 alter table public.profiles
   add constraint fk_profiles_id_users
   foreign key (id) references auth.users (id) on delete cascade;
+
+-- 4. After migration 0004 (portfolios, transactions, watchlists), the same
+--    for user-owned tables. Safe to re-run.
+do $$
+declare t text;
+begin
+  foreach t in array array['portfolios', 'transactions', 'watchlists', 'watchlist_items'] loop
+    if not exists (select 1 from pg_constraint where conname = 'fk_' || t || '_user_id_users') then
+      execute format(
+        'alter table public.%I add constraint %I foreign key (user_id) references auth.users (id) on delete cascade',
+        t, 'fk_' || t || '_user_id_users');
+    end if;
+  end loop;
+end $$;

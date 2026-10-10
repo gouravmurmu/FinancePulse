@@ -67,6 +67,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         )
         return response
 
+    app.state.settings = settings
     install_error_handlers(app)
     app.include_router(api_router)
 

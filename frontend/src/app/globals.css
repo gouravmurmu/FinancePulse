@@ -19,6 +19,8 @@
   --text-subtle: #64748b;
   --accent: #2dd4bf;
   --accent-2: #60a5fa;
+  /* Text on accent fills: dark ink passes AA on both teals. */
+  --accent-contrast: #0b1220;
   --positive: #34d399;
   --negative: #f87171;
   --warning: #fbbf24;
@@ -95,6 +97,7 @@
   --color-subtle: var(--text-subtle);
   --color-accent: var(--accent);
   --color-accent-2: var(--accent-2);
+  --color-accent-contrast: var(--accent-contrast);
   --color-positive: var(--positive);
   --color-negative: var(--negative);
   --color-warning: var(--warning);

@@ -9,14 +9,26 @@
 ## First-time database setup
 Run `infra/supabase/setup.sql` as `postgres` (Supabase SQL editor). It creates
 the `marketpulse_api` login used by Render and grants what migrations need.
-Its last statement adds the `profiles → auth.users` foreign key, which the app
-role is not allowed to create; run it after the first deploy.
+Its last statements add the foreign keys from user tables to `auth.users`, which
+the app role is not allowed to create; run them after the deploy that applies
+the matching migration (0001 for profiles, 0004 for portfolios and watchlists).
+
+## Supabase Auth settings
+In the Supabase dashboard, Authentication → URL Configuration:
+- **Site URL**: `https://marketpulse-grv4.vercel.app`
+- **Redirect URLs**: `https://marketpulse-grv4.vercel.app/**` and
+  `https://marketpulse-*-grv4.vercel.app/**` (previews)
+
+Email confirmation stays on. Supabase's built-in email sender is rate-limited
+on the free plan (a few emails per hour); configure custom SMTP (for example
+Resend's free tier) before inviting many users.
 
 ## Environment variables
 
 **Vercel (web)**
 - `NEXT_PUBLIC_API_URL`: the Render URL, e.g. `https://marketpulse-api.onrender.com`
-- `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`: public values from Supabase (step 3)
+- `NEXT_PUBLIC_SUPABASE_URL`: `https://<ref>.supabase.co`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: the project's publishable key (`sb_publishable_…`); public by design
 
 **Render (API)**
 - `DATABASE_URL`: Supabase **session pooler** connection string (IPv4) for the `marketpulse_api` role,
@@ -24,6 +36,9 @@ role is not allowed to create; run it after the first deploy.
 - `CORS_ORIGINS`: the production web URL(s), comma-separated
 - `CORS_ORIGIN_REGEX`: Vercel preview URLs for this account only, `^https://marketpulse-[a-z0-9-]+-grv4\.vercel\.app$`
 - `ENVIRONMENT=production`
+- `SUPABASE_URL`: `https://<ref>.supabase.co`; the API verifies sign-in tokens
+  against its public keys (`/auth/v1/.well-known/jwks.json`)
+- `SUPABASE_JWT_SECRET` (only for projects still on the legacy shared secret)
 
 **GitHub Actions (repository secrets)**
 - `DATABASE_URL`: same value as Render; used by the market data and fundamentals jobs.

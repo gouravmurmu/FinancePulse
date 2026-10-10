@@ -9,7 +9,7 @@ export type Period = (typeof PERIODS)[number];
 export type Region = "global" | "india";
 export type DisplayCurrency = "USD" | "INR";
 
-const FreshnessSchema = z.object({
+export const FreshnessSchema = z.object({
   kind: z.enum(["live", "delayed", "eod", "stale", "unavailable", "demo"]),
   as_of: z.string().nullable().optional(),
 });
@@ -61,7 +61,7 @@ export const QuoteSchema = z.object({
 });
 export type Quote = z.infer<typeof QuoteSchema>;
 
-const PointSchema = z.object({ date: z.string(), value: z.number() });
+export const PointSchema = z.object({ date: z.string(), value: z.number() });
 export type Point = z.infer<typeof PointSchema>;
 
 export const ComparisonSchema = z.object({

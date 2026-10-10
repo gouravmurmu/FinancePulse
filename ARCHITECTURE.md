@@ -11,7 +11,10 @@
 ```
 
 - The browser never calls data providers or the database directly for app data;
-  it calls the API. Supabase Auth (step 3) issues JWTs that the API verifies.
+  it calls the API. Supabase Auth issues JWTs; the browser sends them as a
+  Bearer token and the API verifies them against the project's public keys
+  (JWKS). The API connects as the table owner, so every user-data query also
+  filters on the verified user id; RLS protects Supabase's public endpoints.
 - The API serves stored data and computes analytics on demand. It never loads
   ML libraries.
 - Batch jobs share the backend codebase (`backend/jobs/`) with a heavier
@@ -53,8 +56,16 @@ docs/                hosting, deployment, design system, later data sources and 
 | `market_observations` | Daily bars, unique on (instrument, observed_at, provider, frequency); keeps retrieval time, currency, quote type, quality and provenance | Public read |
 | `profiles` | Per-user preferences, keyed by `auth.users.id` | Owner only (RLS) |
 
-Later steps add statements, FX, news and sentiment, portfolios and transactions,
-watchlists, alerts, forecasts and reports. Every user-owned table gets owner-only
+Step 2 added `fundamentals`, `instrument_snapshots` and `job_runs` (public read).
+Step 3 adds user-owned tables, each with owner-only RLS and isolation tests:
+
+| Table | Purpose |
+|---|---|
+| `portfolios` | Name, base currency (USD/INR), benchmark |
+| `transactions` | Buy/sell ledger: date, quantity, unit (unit, troy_oz, gram), price, fees, currency |
+| `watchlists`, `watchlist_items` | Named instrument lists |
+
+Later parts add alerts, news and sentiment, forecasts and reports. Every user-owned table gets owner-only
 RLS policies and an isolation test.
 
 ## Provider interface (step 2)

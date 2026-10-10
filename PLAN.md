@@ -10,7 +10,7 @@ after every step.
 |---|---|---|---|
 | 1. Foundation and first deploy | 0 | Repo layout, design tokens, app shell, FastAPI service, schema + RLS, CI, hosting verification, live web + API + DB | Done |
 | 2. Markets, Research, Risk Lab | 1, 2 | Provider adapters, curated universe, daily refresh job, Markets dashboard, search, asset pages, technicals, fundamentals (where reliable), Risk Lab with tested metrics | Done |
-| 3. Portfolio and intelligence | 3, 4 | Auth, ledger, P&L, allocation, RLS tests per table, AI assistant with tools, sentiment/anomaly/forecast jobs, Monte Carlo, alerts, reports | Planned |
+| 3. Portfolio and intelligence | 3, 4 | Auth, ledger, P&L, allocation, RLS tests per table, AI assistant with tools, sentiment/anomaly/forecast jobs, Monte Carlo, alerts, reports | In progress |
 | 4. Polish and launch | 5 | Design verification (screenshots, contrast, Lighthouse ≥ 90), accessibility, monitoring, complete docs, final smoke tests | Planned |
 
 ## Step 1 acceptance
@@ -32,6 +32,20 @@ after every step.
 - [x] US fundamentals from SEC (switched on once `SEC_CONTACT_EMAIL` is set)
 - [x] `docs/DATA_SOURCES.md` and `docs/METHODOLOGY.md`
 
+## Step 3 parts
+Each part ships on its own.
+- **3a Sign-in, portfolios, watchlists**: Supabase Auth (email + password),
+  JWT verification in the API, ledger with weighted-average cost, P&L split into
+  price and currency effects, allocation, time-weighted performance vs
+  benchmark, risk contribution, correlation, stress, rebalancing planner, CSV
+  import/export, watchlists. RLS and API isolation tests per table.
+- **3b Alerts and anomaly scans**: alert rules, scheduled evaluation, in-app
+  history; robust z-score anomaly job.
+- **3c News, sentiment, forecasts**: headlines with attribution, FinBERT batch
+  job, forecast baselines with walk-forward evaluation (`docs/MODELS.md`).
+- **3d AI assistant and reports**: Groq behind a provider interface, tools that
+  call backend functions, per-user budget; PDF and CSV reports.
+
 ## Key decisions
 - **Canonical instrument IDs** are readable strings (`eq:us:AAPL`,
   `crypto:BTC`, `metal:XAU:comex-fut`), never provider symbols. Provider symbols
@@ -52,3 +66,4 @@ after every step.
 | yfinance is unofficial and may break | Provider adapter interface, recorded fixtures in tests, honest "unavailable" states |
 | Vercel Hobby is non-commercial only | Documented; Cloudflare Pages fallback |
 | Free LLM quotas | Per-user budget, app fully usable without AI |
+| Supabase free email sender is rate-limited | Clear message on sign-up; custom SMTP (Resend free) before launch |

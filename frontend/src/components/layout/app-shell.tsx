@@ -7,6 +7,7 @@ import { useState } from "react";
 import { cn } from "@/lib/cn";
 import { NAV_ITEMS, isActive } from "./nav";
 import { CommandSearch } from "@/components/search/command-search";
+import { AccountMenu } from "@/components/auth/account-menu";
 import { ThemeToggle } from "./theme-toggle";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -75,6 +76,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <CommandSearch />
           </div>
           <ThemeToggle />
+          <AccountMenu />
         </header>
 
         <main

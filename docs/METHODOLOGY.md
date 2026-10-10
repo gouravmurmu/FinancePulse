@@ -76,3 +76,35 @@ From SEC company facts, annual 10-K figures only:
 - Margins are divided by revenue; free cash flow = operating cash flow −
   capital spending; growth is shown only between consecutive fiscal years and
   not from a negative base.
+
+## Portfolios
+- **Cost basis: weighted average cost.** Buy fees add to cost; sell fees reduce
+  proceeds. A sale removes `quantity / holding` of the remaining cost; the rest
+  of the proceeds is realized P&L. Same-day trades apply buys first, then in
+  entry order. A sale larger than the holding at that date is rejected.
+- **Two currencies per position.** Amounts are kept in the instrument's
+  currency and in the portfolio's base currency at the USD/INR close of each
+  trade date. Unrealized P&L in the base currency splits exactly into a
+  *price effect* (local P&L at today's rate) and a *currency effect* (cost
+  restated at today's rate minus the cost actually paid).
+- **Physical metal** is entered in grams or troy ounces (1 troy oz =
+  31.1034768 g) and valued at the COMEX futures reference price. That is not a
+  dealer's buy or sell price; an ETF holding is entered as the ETF.
+- **Time-weighted return.** Holdings are valued at each day's close (prices
+  carried forward over gaps) on exchange business days, or every day if the
+  portfolio holds only crypto. Daily return
+  `r = (V_t + O_t − I_t) / V_{t−1} − 1`, where `I` is money put in (cost incl.
+  fees) and `O` money taken out (sale proceeds net of fees). When a purchase is
+  larger than the existing portfolio (including the first purchase) it counts
+  from the start of the day instead, `r = (V_t + O_t) / (V_{t−1} + I_t) − 1`,
+  so a small base cannot produce an extreme daily return. Returns are chained
+  into a growth-of-100 line.
+- **Risk contribution** of holding *i*: `w_i (Σw)_i / wᵀΣw`, using today's
+  weights and the covariance of daily base-currency returns over the last year.
+  Contributions sum to 100%.
+- **Benchmark**: S&P 500 for USD portfolios and NIFTY 50 for INR portfolios by
+  default; price index in its own currency, no dividends.
+- Dividends, splits after the trade date and other corporate actions are not
+  applied automatically; record them as transactions.
+- **Rebalancing** is hypothetical: trades needed to reach target weights at
+  today's prices, ignoring fees and taxes. Nothing is traded.

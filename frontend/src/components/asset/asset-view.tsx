@@ -9,6 +9,7 @@ import { TableView } from "@/components/charts/table-view";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Change } from "@/components/ui/change";
 import { FreshnessChip } from "@/components/ui/freshness-chip";
+import { WatchButton } from "@/components/watchlist/watch-button";
 import { QueryState } from "@/components/ui/query-state";
 import { Segmented } from "@/components/ui/segmented";
 import { abbreviate, formatDate, formatNumber, formatPercent, formatPrice } from "@/lib/format";
@@ -123,7 +124,10 @@ function AssetHeader({ d, period }: { d: Detail; period: Period }) {
           <Change value={q.change_pct} />
           <span className="text-sm text-muted">{period === "MAX" ? "all history" : period}</span>
         </div>
-        <FreshnessChip freshness={toChip(q.freshness)} />
+        <div className="flex items-center gap-2">
+          <FreshnessChip freshness={toChip(q.freshness)} />
+          <WatchButton instrumentId={i.id} />
+        </div>
       </div>
     </header>
   );

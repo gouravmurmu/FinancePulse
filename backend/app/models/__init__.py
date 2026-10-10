@@ -6,6 +6,7 @@ from app.models.market import (
     JobRun,
     MarketObservation,
 )
+from app.models.portfolio import Portfolio, Transaction, Watchlist, WatchlistItem
 from app.models.user import Profile
 
 __all__ = [
@@ -15,5 +16,9 @@ __all__ = [
     "InstrumentSnapshot",
     "JobRun",
     "MarketObservation",
+    "Portfolio",
     "Profile",
+    "Transaction",
+    "Watchlist",
+    "WatchlistItem",
 ]

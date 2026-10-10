@@ -131,3 +131,70 @@ def test_observation_upsert_key_is_unique(conn):
     conn.execute(insert, {"close": 101})
     rows = conn.execute(text("select close from market_observations")).scalars().all()
     assert [float(r) for r in rows] == [101.0]
+
+
+# --- portfolios, transactions, watchlists (migration 0004) ---------------------
+
+P_A = uuid.UUID("00000000-0000-0000-0000-0000000001aa")
+P_B = uuid.UUID("00000000-0000-0000-0000-0000000001bb")
+W_B = uuid.UUID("00000000-0000-0000-0000-0000000002bb")
+
+
+@pytest.fixture
+def user_rows(conn):
+    params = {"pa": P_A, "pb": P_B, "wb": W_B, "a": USER_A, "b": USER_B}
+    for stmt in (
+        "insert into portfolios (id, user_id, name) values (:pa, :a, 'A'), (:pb, :b, 'B')",
+        "insert into transactions (id, portfolio_id, user_id, instrument_id, side, trade_date, "
+        "quantity, price, currency) values "
+        "(gen_random_uuid(), :pb, :b, 'crypto:BTC', 'buy', '2026-01-02', 1, 1, 'USD')",
+        "insert into watchlists (id, user_id, name) values (:wb, :b, 'B')",
+        "insert into watchlist_items (id, watchlist_id, user_id, instrument_id) values "
+        "(gen_random_uuid(), :wb, :b, 'crypto:BTC')",
+    ):
+        conn.execute(text(stmt), params)
+
+
+@pytest.mark.parametrize("table", ["portfolios", "transactions", "watchlists", "watchlist_items"])
+def test_user_tables_are_owner_only(conn, user_rows, table):
+    _as(conn, "authenticated", USER_A)
+    owners = conn.execute(text(f"select user_id from {table}")).scalars().all()  # noqa: S608 (fixed table list)
+    assert USER_B not in owners
+    assert conn.execute(text(f"update {table} set user_id = :a"), {"a": USER_A}).rowcount == len(  # noqa: S608 (fixed table list)
+        owners
+    )
+    assert (
+        conn.execute(text(f"delete from {table} where user_id = :b"), {"b": USER_B}).rowcount == 0  # noqa: S608 (fixed table list)
+    )
+
+
+@pytest.mark.parametrize("table", ["portfolios", "transactions", "watchlists", "watchlist_items"])
+def test_anonymous_cannot_read_user_tables(conn, table):
+    _as(conn, "anon")
+    with pytest.raises(DBAPIError, match="permission denied"):
+        conn.execute(text(f"select * from {table}"))  # noqa: S608 (fixed table list)
+
+
+def test_cannot_add_transaction_to_someone_elses_portfolio(conn, user_rows):
+    _as(conn, "authenticated", USER_A)
+    with pytest.raises(DBAPIError, match="row-level security"):
+        conn.execute(
+            text(
+                "insert into transactions (id, portfolio_id, user_id, instrument_id, side, "
+                "trade_date, quantity, price, currency) values (gen_random_uuid(), :pb, :a, "
+                "'crypto:BTC', 'buy', '2026-01-02', 1, 1, 'USD')"
+            ),
+            {"pb": P_B, "a": USER_A},
+        )
+
+
+def test_cannot_add_item_to_someone_elses_watchlist(conn, user_rows):
+    _as(conn, "authenticated", USER_A)
+    with pytest.raises(DBAPIError, match="row-level security"):
+        conn.execute(
+            text(
+                "insert into watchlist_items (id, watchlist_id, user_id, instrument_id) "
+                "values (gen_random_uuid(), :wb, :a, 'crypto:BTC')"
+            ),
+            {"wb": W_B, "a": USER_A},
+        )

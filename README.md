@@ -9,7 +9,7 @@ tiers.
 
 ## Status
 
-**Build step 2 of 4 done (Markets, Research, Risk Lab).** What works today:
+**Build step 2 of 4 done; step 3 in progress (portfolios live).** What works today:
 - **Markets**: global and India views, USD/INR display, periods from 1 day to
   5 years, index and asset cards with freshness, growth-of-100 comparison,
   gainers and losers, sector heatmap, exchange open/closed status.
@@ -22,8 +22,14 @@ tiers.
   drawdowns, a seeded Monte Carlo simulation and stress scenarios.
 - Real daily data refreshed twice a day; 5 years of history stored.
 
-Not built yet: portfolio, AI assistant, alerts (steps 3 and 4). Those sections
-say so in the app. See [PLAN.md](PLAN.md).
+- **Accounts** (email and password) with private **portfolios**: buy/sell
+  ledger, weighted-average cost, realized and unrealized P&L with the currency
+  effect shown separately, allocation, time-weighted performance against a
+  benchmark, risk contribution, correlation, stress tests, a rebalancing
+  planner and CSV import/export. **Watchlists** on the Markets page.
+
+Not built yet: AI assistant, alerts, news and forecasts (rest of step 3). Those
+sections say so in the app. See [PLAN.md](PLAN.md).
 
 ## Stack
 Next.js 15 · React 19 · TypeScript · Tailwind CSS v4 · TanStack Query · Zod ·

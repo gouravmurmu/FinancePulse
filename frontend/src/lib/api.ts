@@ -15,6 +15,7 @@ export class ApiError extends Error {
     public readonly code: string,
     message: string,
     public readonly status?: number,
+    public readonly details?: unknown,
   ) {
     super(message);
     this.name = "ApiError";
@@ -31,29 +32,29 @@ export class ApiUnreachableError extends Error {
 
 const DEFAULT_TIMEOUT_MS = 20_000;
 
-type RequestOptions = { timeoutMs?: number; signal?: AbortSignal };
+type RequestOptions = { timeoutMs?: number; signal?: AbortSignal; token?: string | null };
+type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
-async function request<T>(
-  method: "GET" | "POST",
+async function send(
+  method: Method,
   path: string,
-  schema: z.ZodType<T>,
   body: unknown,
-  { timeoutMs = DEFAULT_TIMEOUT_MS, signal }: RequestOptions,
-): Promise<T> {
+  { timeoutMs = DEFAULT_TIMEOUT_MS, signal, token }: RequestOptions,
+): Promise<Response> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   signal?.addEventListener("abort", () => controller.abort());
+  const headers: Record<string, string> = { Accept: "application/json" };
+  if (body !== undefined) headers["Content-Type"] = "application/json";
+  if (token) headers.Authorization = `Bearer ${token}`;
 
   let res: Response;
   try {
     res = await fetch(`${config.apiUrl}${path}`, {
       method,
       signal: controller.signal,
-      headers:
-        method === "POST"
-          ? { Accept: "application/json", "Content-Type": "application/json" }
-          : { Accept: "application/json" },
-      body: method === "POST" ? JSON.stringify(body) : undefined,
+      headers,
+      body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   } catch {
     throw new ApiUnreachableError();
@@ -61,18 +62,36 @@ async function request<T>(
     clearTimeout(timer);
   }
 
-  const json: unknown = await res.json().catch(() => null);
   if (!res.ok) {
     // Render returns 502/503 while a sleeping service boots.
-    if (res.status === 502 || res.status === 503 || res.status === 504) {
+    if (res.status === 502 || res.status === 504 || (res.status === 503 && !token)) {
       throw new ApiUnreachableError();
     }
+    const json: unknown = await res.json().catch(() => null);
     const parsed = ApiErrorSchema.safeParse(json);
     if (parsed.success) {
-      throw new ApiError(parsed.data.error.code, parsed.data.error.message, res.status);
+      throw new ApiError(
+        parsed.data.error.code,
+        parsed.data.error.message,
+        res.status,
+        parsed.data.error.details,
+      );
     }
+    if (res.status === 503) throw new ApiUnreachableError();
     throw new ApiError("http_error", `Request failed with status ${res.status}`, res.status);
   }
+  return res;
+}
+
+async function request<T>(
+  method: Method,
+  path: string,
+  schema: z.ZodType<T>,
+  body: unknown,
+  options: RequestOptions,
+): Promise<T> {
+  const res = await send(method, path, body, options);
+  const json: unknown = res.status === 204 ? null : await res.json().catch(() => null);
   return schema.parse(json);
 }
 
@@ -87,6 +106,20 @@ export function apiPost<T>(
   options: RequestOptions = {},
 ) {
   return request("POST", path, schema, body, options);
+}
+
+export function apiSend<T>(
+  method: Method,
+  path: string,
+  body: unknown,
+  schema: z.ZodType<T>,
+  options: RequestOptions = {},
+) {
+  return request(method, path, schema, body, options);
+}
+
+export async function apiText(path: string, options: RequestOptions = {}): Promise<string> {
+  return (await send("GET", path, undefined, options)).text();
 }
 
 /** Query string from defined values only. */

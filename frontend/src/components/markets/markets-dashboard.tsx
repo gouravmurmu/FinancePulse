@@ -5,6 +5,7 @@ import { CircleAlert, CircleCheck, Clock } from "lucide-react";
 import { useMemo, useState } from "react";
 import { LineChart } from "@/components/charts/line-chart";
 import { Card, CardHeader } from "@/components/ui/card";
+import { WatchlistCard } from "@/components/watchlist/watchlist-card";
 import { QueryState } from "@/components/ui/query-state";
 import { Segmented } from "@/components/ui/segmented";
 import { EmptyState } from "@/components/ui/states";
@@ -163,6 +164,7 @@ function OverviewBody({ data, period }: { data: Overview; period: Period }) {
         </Card>
 
         <div className="flex flex-col gap-6 lg:col-span-4">
+          <WatchlistCard currency={data.currency as "USD" | "INR"} />
           <Card>
             <CardHeader title="Top gainers" subtitle="Stocks and crypto" />
             {data.gainers.length ? (

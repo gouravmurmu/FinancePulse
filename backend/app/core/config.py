@@ -27,12 +27,23 @@ class Settings(BaseSettings):
 
     request_timeout_seconds: float = 15.0
 
+    # Supabase Auth. Access tokens are verified against the project's JWKS
+    # (asymmetric signing keys); a legacy HS256 secret is accepted if set.
+    supabase_url: str | None = None
+    supabase_jwt_secret: str | None = None
+    jwt_audience: str = "authenticated"
+
     @field_validator("cors_origins", mode="before")
     @classmethod
     def _split_origins(cls, value: object) -> object:
         if isinstance(value, str):
             return [o.strip().rstrip("/") for o in value.split(",") if o.strip()]
         return value
+
+    @field_validator("supabase_url")
+    @classmethod
+    def _strip_slash(cls, value: str | None) -> str | None:
+        return value.rstrip("/") if value else None
 
     @field_validator("database_url")
     @classmethod

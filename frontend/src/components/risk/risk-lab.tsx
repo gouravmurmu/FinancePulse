@@ -395,7 +395,7 @@ function MonteCarloCard({
               type="button"
               onClick={() => mc.mutate()}
               disabled={mc.isPending || w.total <= 0}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-3 py-1.5 text-sm font-medium text-bg disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-3 py-1.5 text-sm font-medium text-accent-contrast disabled:opacity-50"
             >
               <Play size={14} aria-hidden="true" />{" "}
               {mc.isPending ? "Simulating…" : "Run simulation"}
