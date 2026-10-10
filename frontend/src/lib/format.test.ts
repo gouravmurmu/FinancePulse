@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { abbreviate, direction, formatDate, formatMoney, formatPercent } from "./format";
+import {
+  abbreviate,
+  direction,
+  formatDate,
+  formatMoney,
+  formatPercent,
+  formatPrice,
+} from "./format";
 
 describe("formatMoney", () => {
   it("uses US grouping for USD", () => {
@@ -51,5 +58,18 @@ describe("formatDate", () => {
   it("respects the time zone", () => {
     // 20:00 UTC on 9 Oct is already 10 Oct in IST.
     expect(formatDate("2026-10-09T20:00:00Z", "Asia/Kolkata")).toBe("10 Oct 2026");
+  });
+});
+
+describe("formatPrice", () => {
+  it("shows index levels without a currency symbol", () => {
+    expect(formatPrice(24510.5, "INR", "index")).toBe("24,510.50");
+  });
+  it("uses the symbol for USD and INR prices", () => {
+    expect(formatPrice(182.3, "USD", "equity")).toBe("$182.30");
+    expect(formatPrice(123456.7, "INR", "equity")).toBe("₹1,23,456.70");
+  });
+  it("uses the ISO code for other currencies and 4 decimals below 1", () => {
+    expect(formatPrice(0.5123, "EUR", "equity")).toBe("0.5123 EUR");
   });
 });

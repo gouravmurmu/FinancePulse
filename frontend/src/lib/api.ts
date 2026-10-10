@@ -31,10 +31,14 @@ export class ApiUnreachableError extends Error {
 
 const DEFAULT_TIMEOUT_MS = 20_000;
 
-export async function apiGet<T>(
+type RequestOptions = { timeoutMs?: number; signal?: AbortSignal };
+
+async function request<T>(
+  method: "GET" | "POST",
   path: string,
   schema: z.ZodType<T>,
-  { timeoutMs = DEFAULT_TIMEOUT_MS, signal }: { timeoutMs?: number; signal?: AbortSignal } = {},
+  body: unknown,
+  { timeoutMs = DEFAULT_TIMEOUT_MS, signal }: RequestOptions,
 ): Promise<T> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -43,8 +47,13 @@ export async function apiGet<T>(
   let res: Response;
   try {
     res = await fetch(`${config.apiUrl}${path}`, {
+      method,
       signal: controller.signal,
-      headers: { Accept: "application/json" },
+      headers:
+        method === "POST"
+          ? { Accept: "application/json", "Content-Type": "application/json" }
+          : { Accept: "application/json" },
+      body: method === "POST" ? JSON.stringify(body) : undefined,
     });
   } catch {
     throw new ApiUnreachableError();
@@ -52,19 +61,42 @@ export async function apiGet<T>(
     clearTimeout(timer);
   }
 
-  const body: unknown = await res.json().catch(() => null);
+  const json: unknown = await res.json().catch(() => null);
   if (!res.ok) {
     // Render returns 502/503 while a sleeping service boots.
     if (res.status === 502 || res.status === 503 || res.status === 504) {
       throw new ApiUnreachableError();
     }
-    const parsed = ApiErrorSchema.safeParse(body);
+    const parsed = ApiErrorSchema.safeParse(json);
     if (parsed.success) {
       throw new ApiError(parsed.data.error.code, parsed.data.error.message, res.status);
     }
     throw new ApiError("http_error", `Request failed with status ${res.status}`, res.status);
   }
-  return schema.parse(body);
+  return schema.parse(json);
+}
+
+export function apiGet<T>(path: string, schema: z.ZodType<T>, options: RequestOptions = {}) {
+  return request("GET", path, schema, undefined, options);
+}
+
+export function apiPost<T>(
+  path: string,
+  body: unknown,
+  schema: z.ZodType<T>,
+  options: RequestOptions = {},
+) {
+  return request("POST", path, schema, body, options);
+}
+
+/** Query string from defined values only. */
+export function qs(params: Record<string, string | number | undefined | null>): string {
+  const p = new URLSearchParams();
+  for (const [k, v] of Object.entries(params)) {
+    if (v !== undefined && v !== null && v !== "") p.set(k, String(v));
+  }
+  const s = p.toString();
+  return s ? `?${s}` : "";
 }
 
 export const HealthSchema = z.object({

@@ -6,6 +6,7 @@ import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/cn";
 import { NAV_ITEMS, isActive } from "./nav";
+import { CommandSearch } from "@/components/search/command-search";
 import { ThemeToggle } from "./theme-toggle";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -58,7 +59,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           className="flex items-center gap-3 rounded-lg px-2 py-2 text-muted hover:text-text"
         >
-          {collapsed ? <PanelLeftOpen size={18} aria-hidden="true" /> : <PanelLeftClose size={18} aria-hidden="true" />}
+          {collapsed ? (
+            <PanelLeftOpen size={18} aria-hidden="true" />
+          ) : (
+            <PanelLeftClose size={18} aria-hidden="true" />
+          )}
           {collapsed ? null : <span className="text-sm">Collapse</span>}
         </button>
       </aside>
@@ -66,17 +71,22 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-border bg-bg/80 px-4 backdrop-blur md:px-6">
           <span className="font-semibold md:hidden">MarketPulse</span>
-          <div className="flex-1" />
+          <div className="flex flex-1 justify-center md:justify-start">
+            <CommandSearch />
+          </div>
           <ThemeToggle />
         </header>
 
-        <main id="main" className="mx-auto w-full max-w-[1440px] flex-1 px-4 pb-24 pt-6 md:px-6 md:pb-10">
+        <main
+          id="main"
+          className="mx-auto w-full max-w-[1440px] flex-1 px-4 pb-24 pt-6 md:px-6 md:pb-10"
+        >
           {children}
         </main>
 
         <footer className="hidden border-t border-border px-6 py-4 text-xs text-subtle md:block">
-          MarketPulse is a research tool, not investment advice. Prices may be delayed or end of day;
-          every figure shows its source and as-of time.
+          MarketPulse is a research tool, not investment advice. Prices may be delayed or end of
+          day; every figure shows its source and as-of time.
         </footer>
       </div>
 

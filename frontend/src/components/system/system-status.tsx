@@ -46,7 +46,11 @@ export function SystemStatus() {
     };
 
   let db: { state: RowState; detail: string };
-  if (!data) db = { state: apiDown ? "down" : isPending ? "loading" : "down", detail: apiDown ? "Unknown (API offline)" : "Checking…" };
+  if (!data)
+    db = {
+      state: apiDown ? "down" : isPending ? "loading" : "down",
+      detail: apiDown ? "Unknown (API offline)" : "Checking…",
+    };
   else if (data.database.status === "ok")
     db = { state: "ok", detail: `Connected · ${data.database.latency_ms ?? "?"} ms` };
   else if (data.database.status === "not_configured")
@@ -82,7 +86,10 @@ export function SystemStatus() {
       ) : null}
       <div className="mt-3 border-t border-border pt-2 text-xs text-subtle">
         {data ? (
-          <>Server time {formatDate(data.server_time)} · {new Date(data.server_time).toISOString().slice(11, 19)} UTC</>
+          <>
+            Server time {formatDate(data.server_time)} ·{" "}
+            {new Date(data.server_time).toISOString().slice(11, 19)} UTC
+          </>
         ) : isPending ? (
           <SkeletonBlock className="h-3 w-40" />
         ) : (

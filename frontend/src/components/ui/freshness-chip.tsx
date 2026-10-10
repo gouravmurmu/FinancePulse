@@ -36,7 +36,13 @@ const STYLE: Record<Freshness["kind"], string> = {
   demo: "text-warning border-warning/40",
 };
 
-export function FreshnessChip({ freshness, className }: { freshness: Freshness; className?: string }) {
+export function FreshnessChip({
+  freshness,
+  className,
+}: {
+  freshness: Freshness;
+  className?: string;
+}) {
   return (
     <span
       className={cn(

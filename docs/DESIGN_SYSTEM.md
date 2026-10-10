@@ -28,9 +28,32 @@ meet 4.5:1 on white.
 captions, axis labels and the footer (large/secondary text), never body copy.
 
 ## Chart palette
-Fixed order: teal `#2DD4BF`, blue `#60A5FA`, violet `#A78BFA`, amber `#F59E0B`,
-pink `#F472B6`, green `#34D399`, orange `#FB923C`, slate `#94A3B8`. Gold
-`#E5B94E` and silver `#C0C7D1` are reserved for the metals.
+Categorical slots in fixed order (the order is what keeps adjacent series
+distinguishable under colour-vision deficiency):
+
+| Slot | Dark | Light |
+|---|---|---|
+| 1 blue | `#3987E5` | `#2A78D6` |
+| 2 orange | `#D95926` | `#EB6834` |
+| 3 aqua | `#199E70` | `#1BAF7A` |
+| 4 yellow | `#C98500` | `#EDA100` |
+| 5 magenta | `#D55181` | `#E87BA4` |
+| 6 green | `#008300` | `#008300` |
+| 7 violet | `#9085E9` | `#6250D6` |
+| 8 red | `#E66767` | `#E34948` |
+
+Validated (lightness band, chroma, adjacent-pair CVD ΔE ≥ 8, normal-vision
+ΔE ≥ 15, contrast) against the dark surface `#111A2B` and white. In light mode
+aqua, yellow and magenta are below 3:1 contrast, so every chart has a legend and
+a table view. Rules:
+- Colour follows the instrument (its position in the user's selection), never
+  its rank; removing one series does not repaint the others.
+- At most 8 series; one y-axis (multi-asset comparisons are indexed to 100).
+- Correlation uses a diverging blue ↔ red scale with a grey midpoint, and
+  every cell prints its value.
+- Gain/loss colours (`--positive`/`--negative`) are status colours and always
+  carry ▲/▼ and a signed number.
+- Gold `#E5B94E` and silver `#C0C7D1` are reserved for metal badges, not series.
 
 ## Typography
 Inter via `next/font` (self-hosted, `display: swap`); JetBrains Mono for code

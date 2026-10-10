@@ -28,14 +28,22 @@
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 
   /* Fixed categorical chart palette (same asset keeps the same color). */
-  --chart-1: #2dd4bf;
-  --chart-2: #60a5fa;
-  --chart-3: #a78bfa;
-  --chart-4: #f59e0b;
-  --chart-5: #f472b6;
-  --chart-6: #34d399;
-  --chart-7: #fb923c;
-  --chart-8: #94a3b8;
+  /* Order is the colorblind-safety mechanism; validated with the dataviz
+     palette checker against --surface (dark) and #ffffff (light). */
+  --chart-1: #3987e5;
+  --chart-2: #d95926;
+  --chart-3: #199e70;
+  --chart-4: #c98500;
+  --chart-5: #d55181;
+  --chart-6: #008300;
+  --chart-7: #9085e9;
+  --chart-8: #e66767;
+  --chart-grid: rgba(148, 163, 184, 0.12);
+  --chart-axis: #64748b;
+  /* Diverging (correlation): blue <-> red, gray midpoint. */
+  --div-neg: #e66767;
+  --div-mid: #383835;
+  --div-pos: #3987e5;
   --gold: #e5b94e;
   --silver: #c0c7d1;
 
@@ -59,6 +67,20 @@
   --ambient-1: rgba(13, 148, 136, 0.05);
   --ambient-2: rgba(37, 99, 235, 0.04);
   --shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+
+  --chart-1: #2a78d6;
+  --chart-2: #eb6834;
+  --chart-3: #1baf7a;
+  --chart-4: #eda100;
+  --chart-5: #e87ba4;
+  --chart-6: #008300;
+  --chart-7: #6250d6;
+  --chart-8: #e34948;
+  --chart-grid: rgba(15, 23, 42, 0.08);
+  --chart-axis: #64748b;
+  --div-neg: #e34948;
+  --div-mid: #f0efec;
+  --div-pos: #2a78d6;
 
   color-scheme: light;
 }

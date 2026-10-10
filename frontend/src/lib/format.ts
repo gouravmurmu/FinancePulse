@@ -77,3 +77,29 @@ export function formatDate(input: string | Date, timeZone = "UTC"): string {
   const get = (t: string) => Number(parts.find((p) => p.type === t)?.value);
   return `${get("day")} ${MONTHS[get("month") - 1]} ${get("year")}`;
 }
+
+/**
+ * A price in its own unit. Index levels and FX rates are plain numbers;
+ * USD/INR amounts carry their symbol; other currencies carry the ISO code.
+ */
+export function formatPrice(value: number, currency: string, assetClass?: string): string {
+  const decimals = Math.abs(value) >= 1 ? 2 : 4;
+  if (assetClass === "index" || assetClass === "fx") {
+    return new Intl.NumberFormat("en-US", {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+    }).format(value);
+  }
+  if (currency === "USD" || currency === "INR") return formatMoney(value, currency, decimals);
+  const body = new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  }).format(value);
+  return `${body} ${currency}`;
+}
+
+/** Plain ratio with a fixed number of decimals, typographic minus. */
+export function formatNumber(value: number, decimals = 2): string {
+  const body = Math.abs(value).toFixed(decimals);
+  return `${value < 0 ? "−" : ""}${body}`;
+}

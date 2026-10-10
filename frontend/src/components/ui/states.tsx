@@ -2,7 +2,12 @@ import { cn } from "@/lib/cn";
 import { Card } from "./card";
 
 export function SkeletonBlock({ className }: { className?: string }) {
-  return <div aria-hidden="true" className={cn("animate-pulse rounded-md bg-surface-raised", className)} />;
+  return (
+    <div
+      aria-hidden="true"
+      className={cn("animate-pulse rounded-md bg-surface-raised", className)}
+    />
+  );
 }
 
 export function SkeletonCard({ lines = 3, className }: { lines?: number; className?: string }) {

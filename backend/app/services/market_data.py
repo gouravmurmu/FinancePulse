@@ -26,8 +26,9 @@ STALE_AFTER_DAYS = {"crypto": 2, "default": 4}
 
 def period_start(period: str, today: date) -> date | None:
     """First calendar date included in a period. 1D is handled by callers as
-    "last bar vs previous bar"; it starts 10 days back to find both bars."""
-    days = {"1D": 10, "1W": 7, "1M": 30, "3M": 91, "6M": 182, "1Y": 365, "3Y": 1096, "5Y": 1826}
+    "last bar vs previous bar"; it starts a month back so sparklines show the
+    recent trend."""
+    days = {"1D": 31, "1W": 7, "1M": 30, "3M": 91, "6M": 182, "1Y": 365, "3Y": 1096, "5Y": 1826}
     if period == "YTD":
         return date(today.year, 1, 1)
     if period == "MAX":

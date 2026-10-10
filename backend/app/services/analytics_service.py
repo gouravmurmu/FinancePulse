@@ -94,7 +94,7 @@ def quote(
         return base
     if period == "1D":
         ref = None if len(close) < 2 else float(close.iloc[-2])
-        spark = close.iloc[-2:]
+        spark = close
     else:
         ref = float(close.iloc[0]) if len(close) > 1 else None
         spark = close

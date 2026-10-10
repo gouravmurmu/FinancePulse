@@ -23,7 +23,9 @@ export function PlannedSection({
         <ul className="mt-3 grid gap-2 sm:grid-cols-2">
           {features.map((f) => (
             <li key={f} className="flex gap-2 text-muted">
-              <span aria-hidden="true" className="text-accent">•</span>
+              <span aria-hidden="true" className="text-accent">
+                •
+              </span>
               {f}
             </li>
           ))}

@@ -1,4 +1,12 @@
-import { Bell, Bot, Briefcase, LineChart, Search, ShieldAlert, type LucideIcon } from "lucide-react";
+import {
+  Bell,
+  Bot,
+  Briefcase,
+  LineChart,
+  Search,
+  ShieldAlert,
+  type LucideIcon,
+} from "lucide-react";
 
 export type NavItem = { href: string; label: string; icon: LucideIcon };
 
