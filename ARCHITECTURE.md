@@ -64,8 +64,13 @@ Step 3 adds user-owned tables, each with owner-only RLS and isolation tests:
 | `portfolios` | Name, base currency (USD/INR), benchmark |
 | `transactions` | Buy/sell ledger: date, quantity, unit (unit, troy_oz, gram), price, fees, currency |
 | `watchlists`, `watchlist_items` | Named instrument lists |
+| `alert_rules` | Instrument, kind, threshold, active, last state (for crossing) |
+| `alert_events` | Fired alerts, one per rule and trading date; written only by the job, users can read, mark read and delete |
 
-Later parts add alerts, news and sentiment, forecasts and reports. Every user-owned table gets owner-only
+`anomalies` (public read) holds statistical flags, one per instrument, day and
+kind, written by `jobs/scan_alerts.py` after each market data refresh.
+
+Later parts add news and sentiment, forecasts and reports. Every user-owned table gets owner-only
 RLS policies and an isolation test.
 
 ## Provider interface (step 2)

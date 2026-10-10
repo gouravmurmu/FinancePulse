@@ -1,3 +1,4 @@
+from app.models.alerts import AlertEvent, AlertRule, AnomalyFlag
 from app.models.market import (
     Fundamental,
     Instrument,
@@ -10,6 +11,9 @@ from app.models.portfolio import Portfolio, Transaction, Watchlist, WatchlistIte
 from app.models.user import Profile
 
 __all__ = [
+    "AlertEvent",
+    "AlertRule",
+    "AnomalyFlag",
     "Fundamental",
     "Instrument",
     "InstrumentAlias",

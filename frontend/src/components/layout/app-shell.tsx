@@ -8,11 +8,20 @@ import { cn } from "@/lib/cn";
 import { NAV_ITEMS, isActive } from "./nav";
 import { CommandSearch } from "@/components/search/command-search";
 import { AccountMenu } from "@/components/auth/account-menu";
+import { useAlertEvents } from "@/lib/alerts";
 import { ThemeToggle } from "./theme-toggle";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
+  const unread = useAlertEvents().data?.unread ?? 0;
+  const badge = (href: string) =>
+    href === "/alerts" && unread > 0 ? (
+      <span
+        className="absolute -right-1 -top-1 size-2 rounded-full bg-accent"
+        aria-label={`${unread} unread alerts`}
+      />
+    ) : null;
 
   return (
     <div className="flex min-h-dvh">
@@ -48,7 +57,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   active && "bg-surface-raised font-medium text-text",
                 )}
               >
-                <Icon size={18} aria-hidden="true" className={active ? "text-accent" : undefined} />
+                <span className="relative">
+                  <Icon
+                    size={18}
+                    aria-hidden="true"
+                    className={active ? "text-accent" : undefined}
+                  />
+                  {badge(href)}
+                </span>
                 {collapsed ? <span className="sr-only">{label}</span> : label}
               </Link>
             );
@@ -109,7 +125,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 active && "text-accent",
               )}
             >
-              <Icon size={18} aria-hidden="true" />
+              <span className="relative">
+                <Icon size={18} aria-hidden="true" />
+                {badge(href)}
+              </span>
               <span className="truncate">{label.replace("AI ", "")}</span>
             </Link>
           );

@@ -138,11 +138,20 @@ def test_observation_upsert_key_is_unique(conn):
 P_A = uuid.UUID("00000000-0000-0000-0000-0000000001aa")
 P_B = uuid.UUID("00000000-0000-0000-0000-0000000001bb")
 W_B = uuid.UUID("00000000-0000-0000-0000-0000000002bb")
+R_B = uuid.UUID("00000000-0000-0000-0000-0000000003bb")
+USER_TABLES = [
+    "portfolios",
+    "transactions",
+    "watchlists",
+    "watchlist_items",
+    "alert_rules",
+    "alert_events",
+]
 
 
 @pytest.fixture
 def user_rows(conn):
-    params = {"pa": P_A, "pb": P_B, "wb": W_B, "a": USER_A, "b": USER_B}
+    params = {"pa": P_A, "pb": P_B, "wb": W_B, "rb": R_B, "a": USER_A, "b": USER_B}
     for stmt in (
         "insert into portfolios (id, user_id, name) values (:pa, :a, 'A'), (:pb, :b, 'B')",
         "insert into transactions (id, portfolio_id, user_id, instrument_id, side, trade_date, "
@@ -151,11 +160,15 @@ def user_rows(conn):
         "insert into watchlists (id, user_id, name) values (:wb, :b, 'B')",
         "insert into watchlist_items (id, watchlist_id, user_id, instrument_id) values "
         "(gen_random_uuid(), :wb, :b, 'crypto:BTC')",
+        "insert into alert_rules (id, user_id, instrument_id, kind) values "
+        "(:rb, :b, 'crypto:BTC', 'anomaly')",
+        "insert into alert_events (id, rule_id, user_id, instrument_id, observed_at, message) "
+        "values (gen_random_uuid(), :rb, :b, 'crypto:BTC', '2026-01-02', 'x')",
     ):
         conn.execute(text(stmt), params)
 
 
-@pytest.mark.parametrize("table", ["portfolios", "transactions", "watchlists", "watchlist_items"])
+@pytest.mark.parametrize("table", USER_TABLES)
 def test_user_tables_are_owner_only(conn, user_rows, table):
     _as(conn, "authenticated", USER_A)
     owners = conn.execute(text(f"select user_id from {table}")).scalars().all()  # noqa: S608 (fixed table list)
@@ -168,7 +181,7 @@ def test_user_tables_are_owner_only(conn, user_rows, table):
     )
 
 
-@pytest.mark.parametrize("table", ["portfolios", "transactions", "watchlists", "watchlist_items"])
+@pytest.mark.parametrize("table", USER_TABLES)
 def test_anonymous_cannot_read_user_tables(conn, table):
     _as(conn, "anon")
     with pytest.raises(DBAPIError, match="permission denied"):
@@ -197,4 +210,28 @@ def test_cannot_add_item_to_someone_elses_watchlist(conn, user_rows):
                 "values (gen_random_uuid(), :wb, :a, 'crypto:BTC')"
             ),
             {"wb": W_B, "a": USER_A},
+        )
+
+
+def test_alert_events_are_written_only_by_the_job(conn, user_rows):
+    _as(conn, "authenticated", USER_B)
+    with pytest.raises(DBAPIError, match="permission denied"):
+        conn.execute(
+            text(
+                "insert into alert_events (id, rule_id, user_id, instrument_id, observed_at, "
+                "message) values (gen_random_uuid(), :rb, :b, 'crypto:BTC', '2026-01-03', 'x')"
+            ),
+            {"rb": R_B, "b": USER_B},
+        )
+
+
+def test_anomalies_are_public_read_only(conn):
+    _as(conn, "anon")
+    assert conn.execute(text("select count(*) from anomalies")).scalar_one() == 0
+    with pytest.raises(DBAPIError, match="permission denied"):
+        conn.execute(
+            text(
+                "insert into anomalies (instrument_id, observed_at, kind, value, zscore, "
+                "threshold) values ('crypto:BTC', '2026-01-02', 'return', 1, 5, 4)"
+            )
         )

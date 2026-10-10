@@ -108,3 +108,38 @@ From SEC company facts, annual 10-K figures only:
   applied automatically; record them as transactions.
 - **Rebalancing** is hypothetical: trades needed to reach target weights at
   today's prices, ignoring fees and taxes. Nothing is traded.
+
+## Anomalies
+Statistical flags that describe an unusual day. They are not predictions or
+trading signals.
+- **Robust z-score.** For each daily value, `z = (x_t − median) / (1.4826 × MAD)`,
+  where the median and median absolute deviation (MAD) are taken over the 252
+  values *before* day t (no look-ahead). At least 120 prior values are needed.
+  The 1.4826 factor makes MAD comparable to a standard deviation for normal data,
+  while one extreme day cannot inflate it the way it inflates a standard deviation.
+- **What is scored, and the threshold for a flag:**
+  - Daily return (close to close): |z| ≥ 4.
+  - Log volume, upward only: z ≥ 4. Skipped when the provider has no volume.
+  - 20-day standard deviation of daily returns, upward only: z ≥ 3.5. Shown
+    annualised (× √252, or × √365 for crypto).
+  - Change in the 60-day correlation with the asset's benchmark over the past 60
+    days: |z| ≥ 3.5. Indices and FX rates are not scored for correlation.
+- **Episodes.** Volatility flags within 10 days of the previous flagged day, and
+  correlation flags within 20 days, belong to one episode; only its first day is
+  stored. Re-running the scan never adds a flag twice.
+- **Schedule.** The scan runs after each market data refresh (11:00 and 22:30
+  UTC) and looks at the last 14 days.
+
+## Alerts
+Evaluated right after the anomaly scan, on each asset's latest stored daily close.
+Nothing is real-time, and alerts appear in the app only (no email yet).
+- **Price above / below**: fires when the close crosses your level. It fires
+  again only after the price has moved back to the other side. If the condition
+  already holds when you create the alert, it fires at the next check.
+- **Daily move**: |close / previous close − 1| ≥ your percentage. Fires on every
+  qualifying day.
+- **20-day volatility**: annualised standard deviation of the last 20 daily
+  returns; fires on crossing, like price alerts.
+- **Any anomaly**: fires on each day the scan flags the asset.
+- Prices are in the asset's own trading currency. Each rule is evaluated at most
+  once per trading date. Limit: 50 alerts per account.

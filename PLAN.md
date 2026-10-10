@@ -34,13 +34,15 @@ after every step.
 
 ## Step 3 parts
 Each part ships on its own.
-- **3a Sign-in, portfolios, watchlists**: Supabase Auth (email + password),
+- **3a Sign-in, portfolios, watchlists** (done): Supabase Auth (email + password),
   JWT verification in the API, ledger with weighted-average cost, P&L split into
   price and currency effects, allocation, time-weighted performance vs
   benchmark, risk contribution, correlation, stress, rebalancing planner, CSV
   import/export, watchlists. RLS and API isolation tests per table.
-- **3b Alerts and anomaly scans**: alert rules, scheduled evaluation, in-app
-  history; robust z-score anomaly job.
+- **3b Alerts and anomaly scans** (done): price, daily-move, volatility and
+  anomaly alerts evaluated after each data refresh, in-app history with unread
+  badge; robust z-score anomaly scan for return, volume, volatility and
+  correlation, shown on asset pages and the Alerts page.
 - **3c News, sentiment, forecasts**: headlines with attribution, FinBERT batch
   job, forecast baselines with walk-forward evaluation (`docs/MODELS.md`).
 - **3d AI assistant and reports**: Groq behind a provider interface, tools that

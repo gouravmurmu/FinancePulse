@@ -21,12 +21,13 @@ alter table public.profiles
   add constraint fk_profiles_id_users
   foreign key (id) references auth.users (id) on delete cascade;
 
--- 4. After migration 0004 (portfolios, transactions, watchlists), the same
---    for user-owned tables. Safe to re-run.
+-- 4. After migrations 0004 and 0005, the same for user-owned tables
+--    (portfolios, transactions, watchlists, alerts). Safe to re-run.
 do $$
 declare t text;
 begin
-  foreach t in array array['portfolios', 'transactions', 'watchlists', 'watchlist_items'] loop
+  foreach t in array array['portfolios', 'transactions', 'watchlists', 'watchlist_items',
+                         'alert_rules', 'alert_events'] loop
     if not exists (select 1 from pg_constraint where conname = 'fk_' || t || '_user_id_users') then
       execute format(
         'alter table public.%I add constraint %I foreign key (user_id) references auth.users (id) on delete cascade',

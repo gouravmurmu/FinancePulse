@@ -27,8 +27,11 @@ tiers.
   effect shown separately, allocation, time-weighted performance against a
   benchmark, risk contribution, correlation, stress tests, a rebalancing
   planner and CSV import/export. **Watchlists** on the Markets page.
+- **Alerts** on price levels, daily moves, volatility and statistical
+  anomalies, checked after each data refresh and shown in the app. Unusual
+  activity flags on every asset page.
 
-Not built yet: AI assistant, alerts, news and forecasts (rest of step 3). Those
+Not built yet: AI assistant, news and forecasts (rest of step 3). Those
 sections say so in the app. See [PLAN.md](PLAN.md).
 
 ## Stack

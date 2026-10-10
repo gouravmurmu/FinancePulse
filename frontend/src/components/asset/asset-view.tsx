@@ -24,6 +24,7 @@ import {
   type Period,
 } from "@/lib/market";
 import { seriesColor } from "@/lib/series";
+import { AnomaliesCard } from "./anomalies-card";
 import { FundamentalsPanel } from "./fundamentals";
 import { RiskPanel } from "./risk-panel";
 
@@ -80,6 +81,7 @@ export function AssetView({ id }: { id: string }) {
             </div>
             <div className="flex flex-col gap-6 xl:col-span-4">
               <AboutCard d={d} />
+              <AnomaliesCard id={id} />
               {d.snapshot ? <CryptoCard d={d} /> : null}
               {d.metal_context ? <MetalCard d={d} /> : null}
               <RelatedCard d={d} />
