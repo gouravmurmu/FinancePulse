@@ -33,7 +33,9 @@ Resend's free tier) before inviting many users.
 **Render (API)**
 - `DATABASE_URL`: Supabase **session pooler** connection string (IPv4) for the `marketpulse_api` role,
   `postgresql://marketpulse_api.<ref>:<password>@aws-0-ap-south-1.pooler.supabase.com:5432/postgres?sslmode=require`
-- `CORS_ORIGINS`: the production web URL(s), comma-separated
+- `CORS_ORIGINS`: every production web URL, comma-separated. Vercel serves this project at both
+  `https://marketpulse-grv4.vercel.app` and `https://marketpulse-sigma-seven.vercel.app`; a missing one
+  makes every page show "The analytics server did not wake up in time" on that address.
 - `CORS_ORIGIN_REGEX`: Vercel preview URLs for this account only, `^https://marketpulse-[a-z0-9-]+-grv4\.vercel\.app$`
 - `ENVIRONMENT=production`
 - `SUPABASE_URL`: `https://<ref>.supabase.co`; the API verifies sign-in tokens
