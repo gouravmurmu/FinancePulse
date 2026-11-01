@@ -57,7 +57,7 @@ jobs:
       - name: Fetch headlines
         if: steps.secrets.outputs.enabled == 'true'
         run: python -m jobs.refresh_news
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         if: steps.secrets.outputs.enabled == 'true'
         with:
           path: ~/.cache/huggingface
